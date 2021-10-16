@@ -11,8 +11,5 @@ public class Cell : MonoBehaviour
     /// <summary>
     /// Set and fix the grid position of the cell.
     /// </summary>
-    public void Awake()
-    {
-        GridPosition = new GridPosition((int)transform.localPosition.x, (int)transform.localPosition.y);
-    }
+    private void Awake() => GridPosition = new GridPosition((int)transform.localPosition.x, (int)transform.localPosition.z);
 }

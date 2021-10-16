@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// Represents a position in a 2D coordinate system.
@@ -55,7 +56,7 @@ public class GridPosition
         if (obj.GetType() != GetType())
             return false;
 
-        if (obj == this)
+        if ((GridPosition)obj == this)
             return true;
 
         GridPosition otherPosition = (GridPosition)obj;
