@@ -15,9 +15,4 @@ public class Cell : MonoBehaviour
     {
         GridPosition = new GridPosition((int)transform.localPosition.x, (int)transform.localPosition.y);
     }
-
-    public void Start()
-    {
-        
-    }
 }
