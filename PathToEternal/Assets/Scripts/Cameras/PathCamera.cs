@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 public class PathCamera : MonoBehaviour
 {
-    #region Editor fields
+    #region Editor location & camera lists
 
     [SerializeField][Tooltip("All the locations of the camera.")]
     private List<Vector3> locationList;
@@ -18,6 +18,9 @@ public class PathCamera : MonoBehaviour
     private List<Quaternion> rotationList;
 
     #endregion
+
+    [SerializeField][Tooltip("The duration in second of the camera transitions.")]
+    private float transitionSpeed = 1;
 
     private LinkedList<Vector3> locations;
     private LinkedListNode<Vector3> currentLocation;
@@ -47,11 +50,13 @@ public class PathCamera : MonoBehaviour
     {
         currentLocation = locations.First;
         currentRotation = rotations.First;
-        UpdateCamera(currentLocation.Value, currentRotation.Value);
+
+        transform.position = currentLocation.Value;
+        transform.rotation = currentRotation.Value;
     }
 
     /// <summary>
-    /// Listen to user inputs and change the camera location and rotation.
+    /// Listen to user inputs and prepare for changing of point of view.
     /// </summary>
     private void Update()
     {
@@ -64,8 +69,6 @@ public class PathCamera : MonoBehaviour
             currentRotation = currentRotation.Next;
             if (currentRotation == null)
                 currentRotation = rotations.First;
-
-            UpdateCamera(currentLocation.Value, currentRotation.Value);
         }
         else if (Input.GetKeyUp(KeyCode.A))
         {
@@ -76,19 +79,18 @@ public class PathCamera : MonoBehaviour
             currentRotation = currentRotation.Previous;
             if (currentRotation == null)
                 currentRotation = rotations.Last;
-
-            UpdateCamera(currentLocation.Value, currentRotation.Value);
         }
     }
 
     /// <summary>
-    /// Set a new location and rotation for the camera.
+    /// Interpolate to new camera location and rotation if it changed.
     /// </summary>
-    /// <param name="location">The new location coordinates.</param>
-    /// <param name="rotation">The new rotations angles.</param>
-    private void UpdateCamera(Vector3 location, Quaternion rotation)
+    private void LateUpdate()
     {
-        transform.position = location;
-        transform.rotation = rotation;
+        if (transform.position != currentLocation.Value)
+        {
+            transform.position = Vector3.Lerp(transform.position, currentLocation.Value, Time.deltaTime * transitionSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, currentRotation.Value, Time.deltaTime * transitionSpeed);
+        }
     }
 }
