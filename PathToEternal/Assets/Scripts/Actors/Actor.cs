@@ -23,7 +23,7 @@ public class Actor : MonoBehaviour
     /// <summary>
     /// Position the actor at the center of the cell.
     /// </summary>
-    protected virtual void Start()
+    private void Start()
     {
         if (_cell == null)
         {
