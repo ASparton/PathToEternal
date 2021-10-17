@@ -6,7 +6,28 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     public GridPosition GridPosition;     // The position of the cell on the grid
-    public Actor Content { get; set; }  // The possible actor that the cell can contains
+
+    private Actor _content;
+    public Actor Content    // The possible actor that the cell can contains
+    { 
+        get { return _content; }
+        set // Also set the Trigger as triggered if the content tag is contained in the Trigger matching tags
+        {
+            _content = value;
+            if (_content != null)
+            {
+                if (Trigger != null && !Trigger.IsTriggered && Trigger.MatchingTags.Contains(_content.tag))
+                    Trigger.IsTriggered = true;
+            }
+            else
+            {
+                if (Trigger != null && !Trigger.KeepTriggered)
+                    Trigger.IsTriggered = false;
+            }
+        }
+    }
+
+    public Trigger Trigger { get; set; }     // The possible trigger that the cell can contains
 
     /// <summary>
     /// Set and fix the grid position of the cell.

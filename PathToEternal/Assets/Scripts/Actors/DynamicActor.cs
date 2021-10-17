@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class DynamicActor : Actor
 {
+    [Tooltip("Speed when the dynamic actor is moving between cells.")]
+    public int transitionSpeed = 10;
+
     private bool inMovement;
 
     /// <summary>
@@ -49,7 +52,7 @@ public class DynamicActor : Actor
 
         while (Vector3.Distance(transform.position, finalDestination) > 0.01f)
         {
-            transform.position = Vector3.Lerp(transform.position, finalDestination, Time.deltaTime * 10);
+            transform.position = Vector3.Lerp(transform.position, finalDestination, Time.deltaTime * transitionSpeed);
             yield return null;
         }
 

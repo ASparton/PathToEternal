@@ -5,16 +5,21 @@ using UnityEngine;
 /// </summary>
 public class Actor : MonoBehaviour
 {
+    [Header("Grid attributes")]
     [SerializeField][Tooltip("The current cell of the actor.")]
     private Cell _cell = null;
     public Cell Cell
     {
         get { return _cell; }
         
-        set
+        set // Update the content or trigger of the new cell
         {
             _cell = value;
-            _cell.Content = this;
+
+            if (tag == "Trigger")
+                _cell.Trigger = (Trigger)this;
+            else
+                _cell.Content = this;
         }
     }
 
