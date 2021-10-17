@@ -11,7 +11,11 @@ public class DynamicActor : Actor
             return;
 
         Cell newCell = LevelGrid.instance.GetCell(position);
-        if (newCell != null)
+        if (newCell != null && newCell.Content == null)
+        {
+            Cell previousCell = Cell;
             Cell = newCell;
+            previousCell.Content = null;
+        }
     }
 }

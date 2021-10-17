@@ -14,6 +14,7 @@ public class Actor : MonoBehaviour
         set // Also change the current position of the actor
         {
             _cell = value;
+            _cell.Content = this;
 
             Vector3 cellPosition = _cell.transform.position;
             transform.position = new Vector3(cellPosition.x, transform.localScale.y / 2, cellPosition.z);
@@ -21,17 +22,13 @@ public class Actor : MonoBehaviour
     }
 
     /// <summary>
-    /// Position the actor at the center of the cell.
+    /// Assign the cell to the actor if it was assigned in the editor. Print a warning otherwise.
     /// </summary>
     private void Start()
     {
-        if (_cell == null)
-        {
-            if (tag != "Player")
-                print("Actor " + name + " does not have an assigned cell.");
-            return;
-        }
-
+        if (_cell == null && tag != "Player")
+            print("Warning: This actor " + name + " does not have an assigned cell.");
+        
         Cell = _cell;
     }
 }

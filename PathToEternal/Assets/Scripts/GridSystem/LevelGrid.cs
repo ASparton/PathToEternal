@@ -99,12 +99,12 @@ public class LevelGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Called every time the player moved, verify it his on the exit cell to terminate the level.
+    /// Called every time the player moved, verify he is on the exit cell to terminate the level.
     /// </summary>
-    /// <param name="newPlayerPosition">The new current player position</param>
-    private void IsLevelCompleted(GridPosition newPlayerPosition)
+    /// <param name="newPlayerPosition">The new current player cell</param>
+    private void IsLevelCompleted(Cell newPlayerCell)
     {
-        if (newPlayerPosition.Equals(exitCell.GridPosition))
+        if (newPlayerCell.GridPosition.Equals(exitCell.GridPosition))
             print("Level completed");
     }
 }

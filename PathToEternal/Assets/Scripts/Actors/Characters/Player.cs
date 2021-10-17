@@ -4,7 +4,7 @@ using UnityEngine;
 public class Player : Character
 {
     // Delegate indicating where the player moved every time he did
-    public delegate void PlayerMoved(GridPosition newPosition);
+    public delegate void PlayerMoved(Cell newCell);
     public static event PlayerMoved PlayerMovedEvent;
 
     /// <summary>
@@ -27,19 +27,39 @@ public class Player : Character
         // If any movement input is detected
         if (xDirection != 0 || yDirection != 0)
         {
-            GridPosition nextPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y);
+            GridPosition pointedPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y);
 
-            // Move on the horizontal axis
+            // Points on the horizontal axis
             if (xDirection != 0 && yDirection == 0)
-                nextPosition = new GridPosition(Cell.GridPosition.x + xDirection, Cell.GridPosition.y);
-            // Or move on the vertical axis
+                pointedPosition = new GridPosition(Cell.GridPosition.x + xDirection, Cell.GridPosition.y);
+            // Or points on the vertical axis
             else if (xDirection == 0 && yDirection != 0)
-                nextPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y + yDirection);
-            // else -> a diagonal are forbidden
+                pointedPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y + yDirection);
+            // else -> diagonals are forbidden
 
-            SetGridPosition(nextPosition);
-            if (PlayerMovedEvent != null)
-                PlayerMovedEvent.Invoke(nextPosition);
+            Cell pointedCell = LevelGrid.instance.GetCell(pointedPosition);
+            if (pointedCell != null)
+                ExecuteAction(pointedCell);
+        }
+    }
+
+    /// <summary>
+    /// Execute an action depending on the the next cell's content.
+    /// </summary>
+    /// <param name="pointedCell">The position pointed by the player</param>
+    private void ExecuteAction(Cell pointedCell)
+    {
+        // If there's no content in the pointed cell, the player moves to it
+        switch (pointedCell.Content)
+        {
+            // More actions to implement in the future
+
+            // If there is no content in the pointed cell the player moves to it.
+            default:
+                SetGridPosition(pointedCell.GridPosition);
+                if (PlayerMovedEvent != null)
+                    PlayerMovedEvent.Invoke(pointedCell);
+                break;
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     public GridPosition GridPosition;     // The position of the cell on the grid
-    //readonly Actor actor; // The possible actor that it can contains
+    public Actor Content { get; set; }  // The possible actor that the cell can contains
 
     /// <summary>
     /// Set and fix the grid position of the cell.
