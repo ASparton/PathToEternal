@@ -21,7 +21,7 @@ public class Actor : MonoBehaviour
             else if (name.Contains("Door"))
                 _cell.Door = (Door)this;
             else
-                _cell.DynamicActor = (DynamicActor)this;
+                _cell.Content = this;
         }
     }
 
@@ -39,7 +39,7 @@ public class Actor : MonoBehaviour
         {
             // Set the actor position
             Vector3 cellPosition = _cell.transform.position;
-            transform.position = new Vector3(cellPosition.x, transform.localScale.y / 2, cellPosition.z);
+            transform.position = new Vector3(cellPosition.x, transform.position.y, cellPosition.z);
         }
 
         Cell = _cell;

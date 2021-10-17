@@ -27,7 +27,7 @@ public class DynamicActor : Actor
             return;
 
         Cell newCell = LevelGrid.instance.GetCell(position);
-        if (newCell != null && newCell.DynamicActor == null)
+        if (newCell != null && newCell.Content == null)
         {
             if (newCell.Door != null && !newCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
                 return;
@@ -37,7 +37,7 @@ public class DynamicActor : Actor
             // Change of cell when fully arrived at destination
             Cell previousCell = Cell;
             Cell = newCell;
-            previousCell.DynamicActor = null;
+            previousCell.Content = null;
         }
     }
 
@@ -51,7 +51,7 @@ public class DynamicActor : Actor
         inMovement = true;
 
         Vector3 cellPosition = destinationCell.transform.position;
-        Vector3 finalDestination = new Vector3(cellPosition.x, transform.localScale.y / 2, cellPosition.z);
+        Vector3 finalDestination = new Vector3(cellPosition.x, 0f, cellPosition.z);
 
         while (Vector3.Distance(transform.position, finalDestination) > 0.01f)
         {

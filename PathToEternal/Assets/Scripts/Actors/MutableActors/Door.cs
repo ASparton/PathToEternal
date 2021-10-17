@@ -19,7 +19,7 @@ public class Door : MutableActor
     public override void ExecuteTriggerAction(Trigger trigger)
     {
         _isOpen = true;
-        OpenDoor();
+        StartCoroutine(OpenDoor());
     }
 
     /// <summary>
@@ -29,46 +29,40 @@ public class Door : MutableActor
     public override void ExecuteUntriggerAction(Trigger trigger)
     {
         _isOpen = false;
-        CloseDoor();
+        StartCoroutine(CloseDoor());
     }
 
     /// <summary>
     /// Interpolate the rotation of the door to open it.
     /// </summary>
     /// <returns>Corountine</returns>
-    private void OpenDoor()
+    private IEnumerator OpenDoor()
     {
-        Vector3 finalPosition = new Vector3(0.5f, 0f, -0.5f);
-        Quaternion finalRotation = new Quaternion(0f, -0.707106829f, 0f, -0.707106829f);
+        Vector3 finalPosition = new Vector3(0f, -2f, 0f);
 
-        /*while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
+        while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
         {
             transform.GetChild(0).localPosition = Vector3.Lerp(transform.GetChild(0).localPosition, finalPosition, Time.deltaTime * 10);
-            transform.GetChild(0).rotation = Quaternion.Lerp(transform.GetChild(0).rotation, finalRotation, Time.deltaTime * 10);
             yield return null;
-        }*/
+        }
 
         transform.GetChild(0).localPosition = finalPosition;
-        transform.GetChild(0).rotation = finalRotation;
     }
 
     /// <summary>
     /// Interpolate the rotation of the door to close it.
     /// </summary>
     /// <returns>Corountine</returns>
-    private void CloseDoor()
+    private IEnumerator CloseDoor()
     {
         Vector3 finalPosition = new Vector3(0f, 0f, 0f);
-        Quaternion finalRotation = new Quaternion(0f, 0f, 0f, 1f);
 
-        /*while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
+        while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
         {
             transform.GetChild(0).localPosition = Vector3.Lerp(transform.GetChild(0).localPosition, finalPosition, Time.deltaTime * 10);
-            transform.GetChild(0).rotation = Quaternion.Lerp(transform.GetChild(0).rotation, finalRotation, Time.deltaTime * 10);
             yield return null;
-        }*/
+        }
 
         transform.GetChild(0).localPosition = finalPosition;
-        transform.GetChild(0).rotation = finalRotation;
     }
 }
