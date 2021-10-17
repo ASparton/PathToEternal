@@ -50,7 +50,7 @@ public class Player : Character
     private void ExecuteAction(Cell pointedCell)
     {
         // If there's no content in the pointed cell, the player moves to it
-        switch (pointedCell.Content)
+        switch (pointedCell.DynamicActor)
         {
             // More actions to implement in the future
 

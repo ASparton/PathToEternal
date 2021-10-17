@@ -27,14 +27,17 @@ public class DynamicActor : Actor
             return;
 
         Cell newCell = LevelGrid.instance.GetCell(position);
-        if (newCell != null && newCell.Content == null)
+        if (newCell != null && newCell.DynamicActor == null)
         {
+            if (newCell.Door != null && !newCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
+                return;
+
             StartCoroutine(InterpolateToCell(newCell));
 
             // Change of cell when fully arrived at destination
             Cell previousCell = Cell;
             Cell = newCell;
-            previousCell.Content = null;
+            previousCell.DynamicActor = null;
         }
     }
 

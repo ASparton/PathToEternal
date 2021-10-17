@@ -7,16 +7,16 @@ public class Cell : MonoBehaviour
 {
     public GridPosition GridPosition;     // The position of the cell on the grid
 
-    private Actor _content;
-    public Actor Content    // The possible actor that the cell can contains
+    private DynamicActor _dynamicActor;
+    public DynamicActor DynamicActor    // The possible actor that the cell can contains
     { 
-        get { return _content; }
+        get { return _dynamicActor; }
         set // Also set the Trigger as triggered if the content tag is contained in the Trigger matching tags
         {
-            _content = value;
-            if (_content != null)
+            _dynamicActor = value;
+            if (_dynamicActor != null)
             {
-                if (Trigger != null && !Trigger.IsTriggered && Trigger.MatchingTags.Contains(_content.tag))
+                if (Trigger != null && !Trigger.IsTriggered && Trigger.MatchingTags.Contains(_dynamicActor.tag))
                     Trigger.IsTriggered = true;
             }
             else
@@ -27,7 +27,9 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public Trigger Trigger { get; set; }     // The possible trigger that the cell can contains
+    public Trigger Trigger { get; set; }    // The possible trigger that the cell can contains
+    public Door Door { get; set; }          // The possible door the cell can contains
+
 
     /// <summary>
     /// Set and fix the grid position of the cell.

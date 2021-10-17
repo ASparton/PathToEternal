@@ -18,8 +18,10 @@ public class Actor : MonoBehaviour
 
             if (tag == "Trigger")
                 _cell.Trigger = (Trigger)this;
+            else if (name.Contains("Door"))
+                _cell.Door = (Door)this;
             else
-                _cell.Content = this;
+                _cell.DynamicActor = (DynamicActor)this;
         }
     }
 

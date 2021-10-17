@@ -81,6 +81,8 @@ public class LevelGrid : MonoBehaviour
     private void Start()
     {
         player.Cell = entryCell;
+        Vector3 cellPosition = entryCell.transform.position;
+        player.transform.position = new Vector3(cellPosition.x, player.transform.localScale.y / 2, cellPosition.z);
     }
 
     /// <summary>

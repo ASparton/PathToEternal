@@ -9,12 +9,10 @@ public class PressurePlate : Trigger
     {
         if (triggeredAspect)
         {
-            print("Trigger");
             transform.position = new Vector3(transform.position.x, transform.position.y - transform.localScale.y / 2, transform.position.z);
         }
         else
         {
-            print("Not trigger");
             transform.position = new Vector3(transform.position.x, transform.position.y + transform.localScale.y / 2, transform.position.z);
         }
     }
