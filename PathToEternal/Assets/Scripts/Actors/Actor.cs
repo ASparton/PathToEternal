@@ -27,7 +27,8 @@ public class Actor : MonoBehaviour
     {
         if (_cell == null)
         {
-            print("Actor " + name + " does not have an assigned cell.");
+            if (tag != "Player")
+                print("Actor " + name + " does not have an assigned cell.");
             return;
         }
 

@@ -2180,6 +2180,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cell: {fileID: 0}
+  _maxHealth: 5
+  _currentHealth: 5
 --- !u!114 &1581682761
 MonoBehaviour:
   m_ObjectHideFlags: 0

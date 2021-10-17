@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Player : DynamicActor
+public class Player : Character
 {
     // Delegate indicating where the player moved every time he did
     public delegate void PlayerMoved(GridPosition newPosition);
