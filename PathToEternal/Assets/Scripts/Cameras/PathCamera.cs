@@ -60,7 +60,7 @@ public class PathCamera : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.E))
+        if (Input.GetKeyUp(KeyCode.RightArrow))
         {
             currentLocation = currentLocation.Next;
             if (currentLocation == null)
@@ -70,7 +70,7 @@ public class PathCamera : MonoBehaviour
             if (currentRotation == null)
                 currentRotation = rotations.First;
         }
-        else if (Input.GetKeyUp(KeyCode.A))
+        else if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
             currentLocation = currentLocation.Previous;
             if (currentLocation == null)

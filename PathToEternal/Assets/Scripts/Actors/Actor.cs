@@ -11,13 +11,10 @@ public class Actor : MonoBehaviour
     {
         get { return _cell; }
         
-        set // Also change the current position of the actor
+        set
         {
             _cell = value;
             _cell.Content = this;
-
-            Vector3 cellPosition = _cell.transform.position;
-            transform.position = new Vector3(cellPosition.x, transform.localScale.y / 2, cellPosition.z);
         }
     }
 
@@ -26,9 +23,18 @@ public class Actor : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        if (_cell == null && tag != "Player")
-            print("Warning: This actor " + name + " does not have an assigned cell.");
-        
+        if (_cell == null)
+        {
+            if (tag != "Player")
+                print("Warning: This actor " + name + " does not have an assigned cell.");
+        }
+        else
+        {
+            // Set the actor position
+            Vector3 cellPosition = _cell.transform.position;
+            transform.position = new Vector3(cellPosition.x, transform.localScale.y / 2, cellPosition.z);
+        }
+
         Cell = _cell;
     }
 }

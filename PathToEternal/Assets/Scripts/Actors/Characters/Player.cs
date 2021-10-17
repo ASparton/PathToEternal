@@ -56,7 +56,7 @@ public class Player : Character
 
             // If there is no content in the pointed cell the player moves to it.
             default:
-                SetGridPosition(pointedCell.GridPosition);
+                MoveToGridPosition(pointedCell.GridPosition);
                 if (PlayerMovedEvent != null)
                     PlayerMovedEvent.Invoke(pointedCell);
                 break;
