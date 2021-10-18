@@ -512,13 +512,29 @@ PrefabInstance:
       propertyPath: _cell
       value: 
       objectReference: {fileID: 1306311981}
+    - target: {fileID: 4219372568605373372, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: TransitionSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4219372568605373372, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: RotationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4219372568605373372, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: AnimationController
+      value: 
+      objectReference: {fileID: 962659101}
+    - target: {fileID: 4219372568605373372, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: CellTransitionDuration
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 4323797434521525097, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
       propertyPath: Target
       value: 
       objectReference: {fileID: 1354291859}
     - target: {fileID: 4824106797696260747, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4900854213529096932, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
       propertyPath: m_IsActive
@@ -564,6 +580,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -3.4999998
       objectReference: {fileID: 0}
+    - target: {fileID: 6168317931466936225, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6168317931466936225, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 39f2a9c1025236f4388b45451f4b26ec, type: 2}
     - target: {fileID: 6862674791051149636, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
       propertyPath: Target
       value: 
@@ -858,6 +882,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9132c114efeaa524fac824695b9aa345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &962659101 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6168317931466936225, guid: fac7a9c7ff213ff4ab7f6316c028246f, type: 3}
+  m_PrefabInstance: {fileID: 683292894}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,7 +941,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 1.25
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -935,8 +964,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.19992581, y: 0.00012839079, z: 0.000026198137, w: 0.9798111}
-  m_LocalPosition: {x: 1.4995413, y: 0.5, z: -1.2499999}
+  m_LocalRotation: {x: 0.16042997, y: 0.37686962, z: -0.066452265, w: 0.9098438}
+  m_LocalPosition: {x: -1.728, y: 2.043, z: -1.748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

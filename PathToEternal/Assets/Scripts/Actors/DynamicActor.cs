@@ -3,8 +3,15 @@ using UnityEngine;
 
 public class DynamicActor : Actor
 {
-    [Tooltip("Speed when the dynamic actor is moving between cells or rotating.")]
-    public int TransitionSpeed = 10;
+    [Header("Animations")]
+    [Tooltip("Seconds needed to rotate.")]
+    public float RotationDuration = 1;
+
+    [Tooltip("Seconds needed to move from one cell to another.")]
+    public float CellTransitionDuration = 2;
+
+    [SerializeField][Tooltip("Animator of the dynamic actor -> Can be null.")]
+    private Animator AnimationController;
 
     protected bool inMovement = false;
     protected bool isRotating = false;
@@ -28,11 +35,6 @@ public class DynamicActor : Actor
                 return;
 
             StartCoroutine(MoveToCell(newCell));
-
-            // Change of cell when fully arrived at destination
-            Cell previousCell = Cell;
-            Cell = newCell;
-            previousCell.Content = null;
         }
     }
 
@@ -43,19 +45,38 @@ public class DynamicActor : Actor
     /// <returns>Corountine</returns>
     private IEnumerator MoveToCell(Cell destinationCell)
     {
+        float yDestination = 0f;
+        if (destinationCell.Trigger != null && destinationCell.Trigger.name.Contains("PressurePlate"))
+            yDestination = 0.025f;
+
+        Vector3 finalDestination = new Vector3(destinationCell.transform.position.x, yDestination, destinationCell.transform.position.z);
+        Vector3 startPosition = transform.position;
+
         inMovement = true;
+        if (AnimationController != null)
+            AnimationController.SetBool("isMoving", true);
 
-        Vector3 cellPosition = destinationCell.transform.position;
-        Vector3 finalDestination = new Vector3(cellPosition.x, 0f, cellPosition.z);
-
-        while (Vector3.Distance(transform.position, finalDestination) > 0.01f)
+        float timeElapsed = 0f;
+        while (timeElapsed < CellTransitionDuration)
         {
-            transform.position = Vector3.Lerp(transform.position, finalDestination, Time.deltaTime * TransitionSpeed);
+            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / CellTransitionDuration);
+
+            // Change of cell when close to arrive at destination
+            if (Vector3.Distance(transform.position, finalDestination) < 0.5)
+            {
+                Cell previousCell = Cell;
+                Cell = destinationCell;
+                previousCell.Content = null;
+            }
+
+            timeElapsed += Time.deltaTime;
             yield return null;
         }
 
         transform.position = finalDestination;
         inMovement = false;
+        if (AnimationController != null)
+            AnimationController.SetBool("isMoving", false);
     }
 
     #endregion
@@ -78,11 +99,19 @@ public class DynamicActor : Actor
     /// <returns>Coroutine</returns>
     private IEnumerator RotateOnYTo(Quaternion finalRotation)
     {
+        float duration = RotationDuration;
+        if (!CameraController.Instance.IsLevelCameraActive())
+            duration = RotationDuration * 2;
+
+        Quaternion startRotation = transform.rotation;
+
         isRotating = true;
 
-        while (Mathf.Abs(transform.rotation.eulerAngles.y - finalRotation.eulerAngles.y) > 0.1)
+        float timeElapsed = 0f;
+        while (timeElapsed < duration)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, finalRotation, Time.deltaTime * TransitionSpeed);
+            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
             yield return null;
         }
 

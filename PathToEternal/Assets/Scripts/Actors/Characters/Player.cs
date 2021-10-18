@@ -60,6 +60,8 @@ public class Player : Character
         }
     }
 
+    #region Direction choice management
+
     /// <summary>
     /// Determine the direction the player is pointing to on the X axis depending on the active camera and his inputs.
     /// </summary>
@@ -243,4 +245,6 @@ public class Player : Character
         else
             return 0;
     }
+
+    #endregion
 }
