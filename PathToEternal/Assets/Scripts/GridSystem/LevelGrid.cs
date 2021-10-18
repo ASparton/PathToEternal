@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class LevelGrid : MonoBehaviour
 {
-    static public LevelGrid instance;   // the unique instance of the class.
+    static public LevelGrid Instance;   // the unique instance of the class.
 
     #region Attributes
 
@@ -49,10 +49,10 @@ public class LevelGrid : MonoBehaviour
             return;
         }
 
-        if (instance == null)
-            instance = this;
+        if (Instance == null)
+            Instance = this;
         else
-            Destroy(instance);
+            Destroy(Instance);
     }
 
     #region Delegates management
