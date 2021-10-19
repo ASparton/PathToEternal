@@ -11,7 +11,7 @@ public class DynamicActor : Actor
     public float CellTransitionDuration = 2;
 
     [SerializeField][Tooltip("Animator of the dynamic actor -> Can be null.")]
-    private Animator AnimationController;
+    protected Animator AnimationController;
 
     protected bool inMovement = false;
     protected bool isRotating = false;
@@ -29,9 +29,11 @@ public class DynamicActor : Actor
             return;
 
         Cell newCell = LevelGrid.Instance.GetCell(position);
-        if (newCell != null && newCell.Content == null)
+        if (newCell != null)
         {
             if (newCell.Door != null && !newCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
+                return;
+            if (newCell.Content != null && newCell.Content.tag != "Exit")
                 return;
 
             StartCoroutine(MoveToCell(newCell));
@@ -48,6 +50,8 @@ public class DynamicActor : Actor
         float yDestination = 0f;
         if (destinationCell.Trigger != null && destinationCell.Trigger.name.Contains("PressurePlate"))
             yDestination = 0.025f;
+        else if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
+            yDestination = 0.25f;
 
         Vector3 finalDestination = new Vector3(destinationCell.transform.position.x, yDestination, destinationCell.transform.position.z);
         Vector3 startPosition = transform.position;

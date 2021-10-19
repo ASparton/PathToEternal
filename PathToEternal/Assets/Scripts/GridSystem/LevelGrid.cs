@@ -21,6 +21,9 @@ public class LevelGrid : MonoBehaviour
     [SerializeField][Tooltip("The exit cell of the grid that the player has to reach.")]
     private Cell exitCell = null;
 
+    [SerializeField][Tooltip("The exit portal of the level.")]
+    private ExitPortalController exitPortal = null;
+
     [SerializeField][Tooltip("The player character.")]
     private Player player = null;
 
@@ -43,6 +46,12 @@ public class LevelGrid : MonoBehaviour
             return;
         }
 
+        if (exitPortal == null)
+        {
+            print("No exit portal found.");
+            return;
+        }
+
         if (player == null)
         {
             print("No player found.");
@@ -62,7 +71,8 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        Player.PlayerMovedEvent += IsLevelCompleted;
+        Player.PlayerMovedEvent += onPlayerMoved;
+        ExitPortalController.ExitAnimationFinishedEvent += OnExitAnimationFinished;
     }
 
     /// <summary>
@@ -70,7 +80,8 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        Player.PlayerMovedEvent -= IsLevelCompleted;
+        Player.PlayerMovedEvent -= onPlayerMoved;
+        ExitPortalController.ExitAnimationFinishedEvent -= OnExitAnimationFinished;
     }
 
     #endregion
@@ -81,8 +92,7 @@ public class LevelGrid : MonoBehaviour
     private void Start()
     {
         player.Cell = entryCell;
-        Vector3 cellPosition = entryCell.transform.position;
-        player.transform.position = new Vector3(cellPosition.x, 0, cellPosition.z);
+        player.Spawn(entryCell.transform.position);
     }
 
     /// <summary>
@@ -104,9 +114,21 @@ public class LevelGrid : MonoBehaviour
     /// Called every time the player moved, verify he is on the exit cell to terminate the level.
     /// </summary>
     /// <param name="newPlayerPosition">The new current player cell</param>
-    private void IsLevelCompleted(Cell newPlayerCell)
+    private void onPlayerMoved(Cell newPlayerCell)
     {
         if (newPlayerCell.GridPosition.Equals(exitCell.GridPosition))
-            print("Level completed");
+        {
+            exitPortal.StartExitAnimation();
+            CameraController.Instance.ActivateEndAnimationCamera();
+            StartCoroutine(player.PlayerDizzyAnimation(exitPortal.EndAnimationDuration));
+        }
+    }
+
+    /// <summary>
+    /// Called when the exit portal animation is finished. Make the player disappear and complete the level.
+    /// </summary>
+    private void OnExitAnimationFinished()
+    {
+        Destroy(player);
     }
 }

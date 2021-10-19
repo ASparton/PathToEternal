@@ -12,6 +12,9 @@ public class CameraController : MonoBehaviour
     [SerializeField][Tooltip("The player camera.")]
     private ThirdPersonCamera PlayerCamera;
 
+    [SerializeField][Tooltip("The end animation camera.")]
+    private CameraRotator EndAnimationCamera;
+
     /// <summary>
     /// Assure the singleton pattern.
     /// </summary>
@@ -34,9 +37,15 @@ public class CameraController : MonoBehaviour
         if (PlayerCamera == null)
             print("WARNING: No player camera provided to the camera controller.");
 
+        if (EndAnimationCamera == null)
+            print("WARNING: No end animation camera provided to the camera controller.");
+
         // Enable to level camera first.
         if (PlayerCamera != null && LevelCamera != null)
+        {
             ActivateLevelCamera();
+            EndAnimationCamera.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -58,6 +67,16 @@ public class CameraController : MonoBehaviour
     /// </summary>
     /// <returns>True if the level camera is active, false otherwise.</returns>
     public bool IsLevelCameraActive() => LevelCamera.gameObject.activeInHierarchy;
+
+    /// <summary>
+    /// Desactivate the player and level camera and activate the end animation camera.
+    /// </summary>
+    public void ActivateEndAnimationCamera()
+    {
+        EndAnimationCamera.gameObject.SetActive(true);
+        PlayerCamera.gameObject.SetActive(false);
+        LevelCamera.gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// Desactivate the player camera and activate the level camera.

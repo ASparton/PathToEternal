@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : Character
@@ -5,6 +6,10 @@ public class Player : Character
     // Delegate indicating where the player moved every time he did
     public delegate void PlayerMoved(Cell newCell);
     public static event PlayerMoved PlayerMovedEvent;
+
+    [Header("Animations")]
+    [SerializeField][Tooltip("Duration of the spawn animation.")]
+    private float SpawnFallDuration = 2f;
 
     /// <summary>
     ///  Listen and react to the user inputs.
@@ -58,6 +63,72 @@ public class Player : Character
                     PlayerMovedEvent.Invoke(pointedCell);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Make the player fall down and rotate to the entry cell position given.
+    /// </summary>
+    /// <param name="entryCellPosition">The entry cell position.</param>
+    public void Spawn(Vector3 entryCellPosition)
+    {
+        StartCoroutine(PlayerSpawnAnimation(entryCellPosition));
+    }
+
+    /// <summary>
+    /// Make the player rotate and decrease its scale to 0 during the end animation.
+    /// </summary>
+    /// <param name="endAnimationDuration">The duration of the animation</param>
+    /// <param name="usedToSpawn">True if the coroutine in used when spawning the player.</param>
+    /// <returns>Coroutine</returns>
+    public IEnumerator PlayerDizzyAnimation(float endAnimationDuration)
+    {
+        if (AnimationController != null)
+            AnimationController.SetBool("isDizzy", true);
+
+        float timeElapsed = 0f;
+        while (timeElapsed < endAnimationDuration)
+        {
+            Vector3 eulerAngles = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + 1f, eulerAngles.z));
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Stop animation
+        if (AnimationController != null)
+            AnimationController.SetBool("isDizzy", false);
+    }
+
+    /// <summary>
+    /// Make the player fall down to the destination cell position given.
+    /// </summary>
+    /// <param name="destinationCellPosition">The destination cell position</param>
+    /// <returns>Coroutine</returns>
+    private IEnumerator PlayerSpawnAnimation(Vector3 destinationCellPosition)
+    {
+        if (AnimationController != null)
+            AnimationController.SetBool("isDizzy", true);
+
+        Vector3 startPosition = new Vector3(destinationCellPosition.x, destinationCellPosition.y + 3f, destinationCellPosition.z);
+
+        Quaternion startRotation = Quaternion.AngleAxis(-180f, Vector3.up);
+        Quaternion finalRotation = Quaternion.AngleAxis(0, Vector3.up);
+
+        float timeElapsed = 0f;
+        while (timeElapsed < SpawnFallDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, destinationCellPosition, timeElapsed / SpawnFallDuration);
+            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / SpawnFallDuration);    
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = destinationCellPosition;
+        transform.rotation = finalRotation;
+
+        if (AnimationController != null)
+            AnimationController.SetBool("isDizzy", false);
     }
 
     #region Direction choice management

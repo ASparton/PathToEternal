@@ -1,0 +1,79 @@
+# Blender MTL File: 'portal.blend'
+# Material Count: 7
+
+newmtl plant_1_lp
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\plant 1 texture.png
+
+newmtl plant_2_lp
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\plant 2 texture.png
+
+newmtl plate
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\palte texture.png
+
+newmtl podium
+Ns 7.438022
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.735624 0.293024
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\podium texture.png
+
+newmtl portal
+Ns 9.000004
+Ka 1.000000 1.000000 1.000000
+Kd 0.192511 0.800000 0.247395
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\portal texture.png
+
+newmtl stairs
+Ns 7.438022
+Ka 1.000000 1.000000 1.000000
+Kd 0.019346 0.032684 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\stairs texture.png
+
+newmtl stone
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.184469 0.184469 0.184469
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd F:\\Пашка Модэлер\\портфолио\\модельки\\projects\\ancient portal low poly\\stone_texture.png
