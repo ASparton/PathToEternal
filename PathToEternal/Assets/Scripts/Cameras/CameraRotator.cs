@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -20,7 +19,7 @@ public class CameraRotator : MonoBehaviour
     /// <summary>
     /// Start rotating the camera around its parent.
     /// </summary>
-    public void StartRotate() => _isRotating = true;
+    public void StartRotate() =>_isRotating = true;
 
     /// <summary>
     /// Stop rotating the camera around its parent.

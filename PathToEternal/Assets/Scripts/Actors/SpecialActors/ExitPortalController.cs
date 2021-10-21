@@ -45,6 +45,7 @@ public class ExitPortalController : Actor
     {
         if (EndAnimation != null)
             EndAnimation.Play(true);
+
         if (EndAnimationCamera != null)
             EndAnimationCamera.StartRotate();
     }

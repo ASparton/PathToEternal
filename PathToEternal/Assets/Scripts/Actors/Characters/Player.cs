@@ -51,19 +51,47 @@ public class Player : Character
     /// <param name="pointedCell">The position pointed by the player</param>
     private void ExecuteAction(Cell pointedCell)
     {
-        // If there's no content in the pointed cell, the player moves to it
-        switch (pointedCell.Content)
+        if (pointedCell.Content != null)
         {
-            // More actions to implement in the future
+            switch (pointedCell.Content.tag)
+            {
+                // Futur actions to implement here
 
-            // If there is no content in the pointed cell the player moves to it.
-            default:
-                MoveToGridPosition(pointedCell.GridPosition);
-                if (PlayerMovedEvent != null)
-                    PlayerMovedEvent.Invoke(pointedCell);
-                break;
+                default: // Otherwise the player tries to move to the cell.
+                    HandleMovement(pointedCell);
+                    break;
+            }
+        }
+        else // If the cell has no content, the player moves to it
+            HandleMovement(pointedCell);
+    }
+
+    /// <summary>
+    /// Tries to move to the given cell. If he can it notifies that he moved, otherwise it starts the "Can't move" animation.
+    /// </summary>
+    /// <param name="destinationCell">The cell to try to move to.</param>
+    private void HandleMovement(Cell destinationCell)
+    {
+        if (MoveToGridPosition(destinationCell.GridPosition))
+            PlayerMovedEvent.Invoke(destinationCell);
+        else
+        {
+            if (!inMovement && !isRotating)
+                StartCoroutine(PlayerCantMoveAnimation());
         }
     }
+
+    /// <summary>
+    /// Activate or deactivate the player weapons.
+    /// </summary>
+    /// <param name="active">True to activate, false to deactivate.</param>
+    public void SetWeaponsActive(bool active)
+    {
+        gameObject.transform.GetChild(1).GetChild(0).Find("Shield").gameObject.SetActive(active);
+        gameObject.transform.GetChild(1).GetChild(0).Find("Weapon").gameObject.SetActive(active);
+    }
+
+    #region Player specific animations
 
     /// <summary>
     /// Make the player fall down and rotate to the entry cell position given.
@@ -82,8 +110,8 @@ public class Player : Character
     /// <returns>Coroutine</returns>
     public IEnumerator PlayerDizzyAnimation(float endAnimationDuration)
     {
-        if (AnimationController != null)
-            AnimationController.SetBool("isDizzy", true);
+        // Start animation
+        AnimationController.SetBool("isDizzy", true);
 
         float timeElapsed = 0f;
         while (timeElapsed < endAnimationDuration)
@@ -96,8 +124,7 @@ public class Player : Character
         }
 
         // Stop animation
-        if (AnimationController != null)
-            AnimationController.SetBool("isDizzy", false);
+        AnimationController.SetBool("isDizzy", false);
     }
 
     /// <summary>
@@ -107,8 +134,8 @@ public class Player : Character
     /// <returns>Coroutine</returns>
     private IEnumerator PlayerSpawnAnimation(Vector3 destinationCellPosition)
     {
-        if (AnimationController != null)
-            AnimationController.SetBool("isDizzy", true);
+        // Start animation
+        AnimationController.SetBool("isDizzy", true);
 
         Vector3 startPosition = new Vector3(destinationCellPosition.x, destinationCellPosition.y + 3f, destinationCellPosition.z);
 
@@ -127,10 +154,30 @@ public class Player : Character
         transform.position = destinationCellPosition;
         transform.rotation = finalRotation;
 
-        if (AnimationController != null)
-            AnimationController.SetBool("isDizzy", false);
+        // Stop animation
+        AnimationController.SetBool("isDizzy", false);
     }
 
+    /// <summary>
+    /// Play the shaking head no animations for 1 second.
+    /// </summary>
+    /// <returns>Coroutine</returns>
+    private IEnumerator PlayerCantMoveAnimation()
+    {
+        // Start animation
+        AnimationController.SetBool("cantMove", true);
+        inMovement = true;
+        SetWeaponsActive(false);
+
+        yield return new WaitForSeconds(1f);
+
+        // Stop animation
+        AnimationController.SetBool("cantMove", false);
+        inMovement = false;
+        SetWeaponsActive(true);
+    }
+
+    #endregion
     #region Direction choice management
 
     /// <summary>

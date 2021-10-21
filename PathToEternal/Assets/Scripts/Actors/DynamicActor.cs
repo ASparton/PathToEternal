@@ -4,11 +4,13 @@ using UnityEngine;
 public class DynamicActor : Actor
 {
     [Header("Animations")]
-    [Tooltip("Seconds needed to rotate.")]
-    public float RotationDuration = 1;
+    [SerializeField][Tooltip("Seconds needed to rotate.")]
+    private float _rotationDuration = 1f;
+    public float RotationDuration { get { return _rotationDuration; } }
 
-    [Tooltip("Seconds needed to move from one cell to another.")]
-    public float CellTransitionDuration = 2;
+    [SerializeField][Tooltip("Seconds needed to move from one cell to another.")]
+    private float _cellTransitionDuration = 2f;
+    public float CellTransitionDuration { get { return _cellTransitionDuration; } }
 
     [SerializeField][Tooltip("Animator of the dynamic actor -> Can be null.")]
     protected Animator AnimationController;
@@ -22,22 +24,25 @@ public class DynamicActor : Actor
     /// Change the current actor cell to the cell with the corresponding given position.
     /// </summary>
     /// <param name="position">The position of the cell to set.</param>
-    public void MoveToGridPosition(GridPosition position)
+    /// <returns>True if the character is able to move, false if he can't.</returns>
+    public bool MoveToGridPosition(GridPosition position)
     {
         // Means that it is the same cell, so don't set a new position.
         if (inMovement || position == Cell.GridPosition)
-            return;
+            return false;
 
         Cell newCell = LevelGrid.Instance.GetCell(position);
         if (newCell != null)
         {
+            if (newCell.Content != null && newCell.Content.tag == "Wall")
+                return false;
             if (newCell.Door != null && !newCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
-                return;
-            if (newCell.Content != null && newCell.Content.tag != "Exit")
-                return;
+                return false;
 
             StartCoroutine(MoveToCell(newCell));
+            return true;
         }
+        return false;
     }
 
     /// <summary>
@@ -47,30 +52,38 @@ public class DynamicActor : Actor
     /// <returns>Corountine</returns>
     private IEnumerator MoveToCell(Cell destinationCell)
     {
-        float yDestination = 0f;
+        float xDestination = destinationCell.transform.position.x;
+        float yDestination = destinationCell.transform.position.y;
         if (destinationCell.Trigger != null && destinationCell.Trigger.name.Contains("PressurePlate"))
-            yDestination = 0.025f;
+            yDestination += 0.025f;
         else if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
-            yDestination = 0.25f;
+        {
+            yDestination += 0.25f;
+            xDestination -= 0.05f;
+        }
 
-        Vector3 finalDestination = new Vector3(destinationCell.transform.position.x, yDestination, destinationCell.transform.position.z);
+        Vector3 finalDestination = new Vector3(xDestination, yDestination, destinationCell.transform.position.z);
         Vector3 startPosition = transform.position;
 
         inMovement = true;
         if (AnimationController != null)
             AnimationController.SetBool("isMoving", true);
 
+        bool cellChanged = false;
+
         float timeElapsed = 0f;
-        while (timeElapsed < CellTransitionDuration)
+        while (timeElapsed < _cellTransitionDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / CellTransitionDuration);
+            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / _cellTransitionDuration);
 
             // Change of cell when close to arrive at destination
-            if (Vector3.Distance(transform.position, finalDestination) < 0.5)
+            if (Vector3.Distance(transform.position, finalDestination) < 0.5 && !cellChanged)
             {
                 Cell previousCell = Cell;
                 Cell = destinationCell;
                 previousCell.Content = null;
+
+                cellChanged = true;
             }
 
             timeElapsed += Time.deltaTime;
@@ -103,9 +116,9 @@ public class DynamicActor : Actor
     /// <returns>Coroutine</returns>
     private IEnumerator RotateOnYTo(Quaternion finalRotation)
     {
-        float duration = RotationDuration;
+        float duration = _rotationDuration;
         if (!CameraController.Instance.IsLevelCameraActive())
-            duration = RotationDuration * 2;
+            duration = _rotationDuration * 2;
 
         Quaternion startRotation = transform.rotation;
 

@@ -19,7 +19,7 @@ public class Door : MutableActor
     public override void ExecuteTriggerAction(Trigger trigger)
     {
         _isOpen = true;
-        StartCoroutine(OpenDoor());
+        StartCoroutine(SetDoorState(true));
     }
 
     /// <summary>
@@ -29,37 +29,28 @@ public class Door : MutableActor
     public override void ExecuteUntriggerAction(Trigger trigger)
     {
         _isOpen = false;
-        StartCoroutine(CloseDoor());
+        StartCoroutine(SetDoorState(false));
     }
 
     /// <summary>
     /// Interpolate the rotation of the door to open it.
     /// </summary>
     /// <returns>Corountine</returns>
-    private IEnumerator OpenDoor()
+    private IEnumerator SetDoorState(bool open)
     {
-        Vector3 finalPosition = new Vector3(0f, -2f, 0f);
+        Vector3 startPosition = transform.GetChild(0).localPosition;
+        Vector3 finalPosition;
+        if (open)
+            finalPosition = new Vector3(0f, -2f, 0f);
+        else
+            finalPosition = new Vector3(0f, 0f, 0f);
 
-        while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
+        float duration = 0.35f;
+        float timeElapsed = 0f;
+        while (timeElapsed < duration)
         {
-            transform.GetChild(0).localPosition = Vector3.Lerp(transform.GetChild(0).localPosition, finalPosition, Time.deltaTime * 10);
-            yield return null;
-        }
-
-        transform.GetChild(0).localPosition = finalPosition;
-    }
-
-    /// <summary>
-    /// Interpolate the rotation of the door to close it.
-    /// </summary>
-    /// <returns>Corountine</returns>
-    private IEnumerator CloseDoor()
-    {
-        Vector3 finalPosition = new Vector3(0f, 0f, 0f);
-
-        while (Vector3.Distance(transform.GetChild(0).position, finalPosition) > 0.01f)
-        {
-            transform.GetChild(0).localPosition = Vector3.Lerp(transform.GetChild(0).localPosition, finalPosition, Time.deltaTime * 10);
+            transform.GetChild(0).localPosition = Vector3.Lerp(startPosition, finalPosition, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
             yield return null;
         }
 

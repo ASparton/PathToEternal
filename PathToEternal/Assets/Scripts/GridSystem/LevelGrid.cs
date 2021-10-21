@@ -118,9 +118,10 @@ public class LevelGrid : MonoBehaviour
     {
         if (newPlayerCell.GridPosition.Equals(exitCell.GridPosition))
         {
-            exitPortal.StartExitAnimation();
             CameraController.Instance.ActivateEndAnimationCamera();
+            exitPortal.StartExitAnimation();
             StartCoroutine(player.PlayerDizzyAnimation(exitPortal.EndAnimationDuration));
+            player.SetWeaponsActive(false);
         }
     }
 
@@ -129,6 +130,6 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void OnExitAnimationFinished()
     {
-        Destroy(player);
+        player.transform.localScale = Vector3.zero;
     }
 }

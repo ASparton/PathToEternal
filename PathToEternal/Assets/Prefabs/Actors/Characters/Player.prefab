@@ -140,9 +140,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cell: {fileID: 0}
-  TransitionSpeed: 10
+  RotationDuration: 1
+  CellTransitionDuration: 2
+  AnimationController: {fileID: 0}
   _maxHealth: 5
   _currentHealth: 5
+  SpawnFallDuration: 2
 --- !u!95 &6168317931466936225
 Animator:
   serializedVersion: 3
@@ -151,7 +154,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435698734197470458}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d9a1483b77bf10e4e851678ab6c2e54e, type: 3}
   m_Controller: {fileID: 9100000, guid: b60dc9aa529b314489f628aa3b57c470, type: 2}
   m_CullingMode: 1
