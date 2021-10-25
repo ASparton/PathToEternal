@@ -118,7 +118,6 @@ public class LevelGrid : MonoBehaviour
     {
         if (newPlayerCell.GridPosition.Equals(exitCell.GridPosition))
         {
-            CameraController.Instance.ActivateEndAnimationCamera();
             exitPortal.StartExitAnimation();
             StartCoroutine(player.PlayerDizzyAnimation(exitPortal.EndAnimationDuration));
             player.SetWeaponsActive(false);

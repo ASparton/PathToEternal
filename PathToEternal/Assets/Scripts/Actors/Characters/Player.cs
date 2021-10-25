@@ -16,7 +16,7 @@ public class Player : Character
     /// </summary>
     private void Update()
     {
-        if (!inMovement && !isRotating)
+        if (!inMovement && !isRotating && !CameraController.Instance.IsInCinematic())
         {
             int xDirection = GetXDirection(), yDirection = GetYDirection();
 

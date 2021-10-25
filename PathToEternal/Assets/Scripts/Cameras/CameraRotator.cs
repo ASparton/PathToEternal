@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Make the camera rotate around its parent.
 /// </summary>
-public class CameraRotator : MonoBehaviour
+public class CameraRotator : GenericCamera
 {
     [SerializeField][Tooltip("The rotation speed around the parent.")]
     private float RotationSpeed = 1f;

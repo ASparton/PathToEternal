@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ using UnityEngine;
 /// - Interpolate its position to the next point on the list
 /// - Interpolate its position to the previous point on the list
 /// </summary>
-public class PathCamera : MonoBehaviour
+public class PathCamera : GenericCamera
 {
     #region Editor location & camera lists
 

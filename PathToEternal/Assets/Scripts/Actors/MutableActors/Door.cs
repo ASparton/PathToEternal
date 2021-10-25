@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -19,6 +18,7 @@ public class Door : MutableActor
     public override void ExecuteTriggerAction(Trigger trigger)
     {
         _isOpen = true;
+        StartCoroutine(PlayActionCinematic());
         StartCoroutine(SetDoorState(true));
     }
 
@@ -29,6 +29,7 @@ public class Door : MutableActor
     public override void ExecuteUntriggerAction(Trigger trigger)
     {
         _isOpen = false;
+        StartCoroutine(PlayActionCinematic());
         StartCoroutine(SetDoorState(false));
     }
 
@@ -45,15 +46,34 @@ public class Door : MutableActor
         else
             finalPosition = new Vector3(0f, 0f, 0f);
 
-        float duration = 0.35f;
-        float timeElapsed = 0f;
-        while (timeElapsed < duration)
+        float timeElapsed = -1f;
+        while (timeElapsed < _actionAnimationDuration)
         {
-            transform.GetChild(0).localPosition = Vector3.Lerp(startPosition, finalPosition, timeElapsed / duration);
+            if (timeElapsed >= 0f)
+                transform.GetChild(0).localPosition = Vector3.Lerp(startPosition, finalPosition, timeElapsed / _actionAnimationDuration);
+
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
         transform.GetChild(0).localPosition = finalPosition;
+    }
+
+    /// <summary>
+    /// Activate the action camera the time of the action cinematic.
+    /// </summary>
+    /// <returns>Coroutine</returns>
+    private IEnumerator PlayActionCinematic()
+    {
+        // Activate action camera
+        GenericCamera previousCamera = CameraController.Instance.GetCurrentCamera();
+        CameraController.Instance.ActivateCamera(ActionCamera);
+        CameraController.Instance.SetInCinematic(true);
+
+        yield return new WaitForSecondsRealtime(_actionAnimationDuration + 2f);
+
+        // Deactivate the action camera
+        CameraController.Instance.ActivateCamera(previousCamera);
+        CameraController.Instance.SetInCinematic(false);
     }
 }

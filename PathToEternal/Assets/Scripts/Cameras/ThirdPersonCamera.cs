@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ThirdPersonCamera : MonoBehaviour
+public class ThirdPersonCamera : GenericCamera
 {
     [SerializeField][Tooltip("The target that the camera has to follow.")]
     private Transform Target;
@@ -25,7 +25,7 @@ public class ThirdPersonCamera : MonoBehaviour
     private void LateUpdate()
     {
         if (Target != null)
-        {
+        {   
             transform.localPosition = Vector3.Lerp(transform.localPosition, Offset, Time.deltaTime * SmoothingSpeed);
         }
     }

@@ -34,8 +34,11 @@ public class ExitPortalController : Actor
             print("WARNING: No end animation found for: " + name);
         if (Flame == null)
             print("WARNING: No flame particle system found for: " + name);
+
         if (EndAnimationCamera == null)
             print("WARNING: End animation camera not found for: " + name);
+        else
+            EndAnimationCamera.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -47,7 +50,10 @@ public class ExitPortalController : Actor
             EndAnimation.Play(true);
 
         if (EndAnimationCamera != null)
+        {
+            CameraController.Instance.ActivateCamera(EndAnimationCamera);
             EndAnimationCamera.StartRotate();
+        }
     }
 
     /// <summary>

@@ -12,8 +12,9 @@ public class CameraController : MonoBehaviour
     [SerializeField][Tooltip("The player camera.")]
     private ThirdPersonCamera PlayerCamera;
 
-    [SerializeField][Tooltip("The end animation camera.")]
-    private CameraRotator EndAnimationCamera;
+    private GenericCamera _currentCamera;   // The current active camera
+
+    private bool _inCinematic;  // To know when the current camera is showing a cinematic (to stop taking game inputs from the player)
 
     /// <summary>
     /// Assure the singleton pattern.
@@ -37,14 +38,11 @@ public class CameraController : MonoBehaviour
         if (PlayerCamera == null)
             print("WARNING: No player camera provided to the camera controller.");
 
-        if (EndAnimationCamera == null)
-            print("WARNING: No end animation camera provided to the camera controller.");
-
         // Enable to level camera first.
         if (PlayerCamera != null && LevelCamera != null)
         {
-            ActivateLevelCamera();
-            EndAnimationCamera.gameObject.SetActive(false);
+            _currentCamera = PlayerCamera;
+            ActivateCamera(LevelCamera);
         }
     }
 
@@ -56,9 +54,9 @@ public class CameraController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.C))
         {
             if (LevelCamera.gameObject.activeInHierarchy)
-                ActivatePlayerCamera();
+                ActivateCamera(PlayerCamera);
             else  // Means that it's the player camera that is active
-                ActivateLevelCamera();
+                ActivateCamera(LevelCamera);
         }
     }
 
@@ -69,30 +67,27 @@ public class CameraController : MonoBehaviour
     public bool IsLevelCameraActive() => LevelCamera.gameObject.activeInHierarchy;
 
     /// <summary>
-    /// Desactivate the player and level camera and activate the end animation camera.
+    /// Deactivate the current camera and activate the given one.
     /// </summary>
-    public void ActivateEndAnimationCamera()
+    public void ActivateCamera(GenericCamera cameraToActivate)
     {
-        EndAnimationCamera.gameObject.SetActive(true);
-        PlayerCamera.gameObject.SetActive(false);
-        LevelCamera.gameObject.SetActive(false);
+        if (cameraToActivate != _currentCamera)
+        {
+            _currentCamera.gameObject.SetActive(false);
+            cameraToActivate.gameObject.SetActive(true);
+            _currentCamera = cameraToActivate;
+        }
     }
 
-    /// <summary>
-    /// Desactivate the player camera and activate the level camera.
-    /// </summary>
-    private void ActivateLevelCamera()
-    {
-        LevelCamera.gameObject.SetActive(true);
-        PlayerCamera.gameObject.SetActive(false);
-    }
+    /// <returns>The current active camera</returns>
+    public GenericCamera GetCurrentCamera() => _currentCamera;
 
     /// <summary>
-    /// Desactivate the level camera and activate the player camera.
+    /// Indicate to the camera controller that a cinematic is played or finished.
     /// </summary>
-    private void ActivatePlayerCamera()
-    {
-        LevelCamera.gameObject.SetActive(false);
-        PlayerCamera.gameObject.SetActive(true);
-    }
+    /// <param name="inCinematic">True to indicate that a cinematic is playing, false to indicate that it is finished.</param>
+    public void SetInCinematic(bool inCinematic) => _inCinematic = inCinematic;
+
+    /// <returns>True if a cinematic is currently playing, false otherwise.</returns>
+    public bool IsInCinematic() => _inCinematic;
 }
