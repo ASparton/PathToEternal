@@ -96,7 +96,7 @@ Material:
     - _TransNormalDistortion: 0.1
     - _TransScattering: 2
     - _TransShadow: 0.5
-    - _Translucency: 7.8
+    - _Translucency: 9.9
     - _UVSec: 0
     - _WINDMASKONOFF: 0
     - _WindDensity: 0.05
@@ -108,4 +108,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.010346207, g: 0.07075471, b: 0.040550455, a: 1}
-    - _TopColor: {r: 0.01815593, g: 0.19695005, b: 0.2264151, a: 1}
+    - _TopColor: {r: 0.019607844, g: 0.19607843, b: 0.22745098, a: 1}
+  m_BuildTextureStacks: []

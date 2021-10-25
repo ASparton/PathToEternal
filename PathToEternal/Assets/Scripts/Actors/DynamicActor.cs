@@ -58,7 +58,7 @@ public class DynamicActor : Actor
             yDestination += 0.025f;
         else if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
         {
-            yDestination += 0.25f;
+            yDestination += 0.35f;
             xDestination -= 0.05f;
         }
 

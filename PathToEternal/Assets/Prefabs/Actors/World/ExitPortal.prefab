@@ -503,7 +503,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RotationSpeed: -50
   RotationAcceleration: 1
-  rotateAtStart: 0
 --- !u!1 &3434708585145097900
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,7 +886,7 @@ MonoBehaviour:
   _cell: {fileID: 0}
   EndAnimation: {fileID: 4877927237111733650}
   Flame: {fileID: 9187410897948125605}
-  EndAnimationCamera: {fileID: 0}
+  EndAnimationCamera: {fileID: 7245490137931055117}
 --- !u!1 &7085573510503123166
 GameObject:
   m_ObjectHideFlags: 0
