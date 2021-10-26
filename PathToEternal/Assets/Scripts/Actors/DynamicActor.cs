@@ -21,28 +21,50 @@ public class DynamicActor : Actor
     #region Movement
 
     /// <summary>
-    /// Change the current actor cell to the cell with the corresponding given position.
+    /// Try to make the actor move in the given direction.
     /// </summary>
-    /// <param name="position">The position of the cell to set.</param>
+    /// <param name="direction">The direction of the movement.</param>
     /// <returns>True if the character is able to move, false if he can't.</returns>
-    public bool MoveToGridPosition(GridPosition position)
+    public bool MoveToGridPosition(Direction direction)
     {
         // Means that it is the same cell, so don't set a new position.
-        if (inMovement || position == Cell.GridPosition)
+        if (inMovement)
             return false;
 
-        Cell newCell = LevelGrid.Instance.GetCell(position);
-        if (newCell != null)
+        Cell nextCell = LevelGrid.Instance.GetCell(Cell.GridPosition, direction);
+        if (nextCell != null)
         {
-            if (newCell.Content != null && newCell.Content.tag == "Wall")
+            if (nextCell.Content != null && nextCell.Content.tag == "Wall")
                 return false;
-            if (newCell.Door != null && !newCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
+            if (nextCell.Door != null && !nextCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
                 return false;
+            if (nextCell.Content != null && nextCell.Content.tag == "Crate")
+            {
+                DynamicActor nextCellCrate = (DynamicActor)nextCell.Content;
+                if (nextCellCrate.MoveToGridPosition(direction))
+                {
+                    StartCoroutine(MoveToCell(nextCell));
+                    return true;
+                }
+                else
+                    return false;   // There is a wall or a closed door behind the crate
+            }
 
-            StartCoroutine(MoveToCell(newCell));
+            StartCoroutine(MoveToCell(nextCell));
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// Free the content of the actual cell and set the new cell of this dynamic character.
+    /// </summary>
+    /// <param name="newCell">The new cell to assign to the dynamic character.</param>
+    private void ChangeCell(Cell newCell)
+    {
+        Cell previousCell = Cell;
+        Cell = newCell;
+        previousCell.Content = null;
     }
 
     /// <summary>
@@ -52,17 +74,7 @@ public class DynamicActor : Actor
     /// <returns>Corountine</returns>
     private IEnumerator MoveToCell(Cell destinationCell)
     {
-        float xDestination = destinationCell.transform.position.x;
-        float yDestination = destinationCell.transform.position.y;
-        if (destinationCell.Trigger != null && destinationCell.Trigger.name.Contains("PressurePlate"))
-            yDestination += 0.025f;
-        else if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
-        {
-            yDestination += 0.35f;
-            xDestination -= 0.05f;
-        }
-
-        Vector3 finalDestination = new Vector3(xDestination, yDestination, destinationCell.transform.position.z);
+        Vector3 finalDestination = new Vector3(GetXDestination(destinationCell), GetYDestination(destinationCell), destinationCell.transform.position.z);
         Vector3 startPosition = transform.position;
 
         inMovement = true;
@@ -76,14 +88,11 @@ public class DynamicActor : Actor
         {
             transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / _cellTransitionDuration);
 
-            // Change of cell when close to arrive at destination
-            if (Vector3.Distance(transform.position, finalDestination) < 0.5 && !cellChanged)
+            // Cell changing
+            if (Vector3.Distance(transform.position, finalDestination) < 0.5f && !cellChanged)
             {
-                Cell previousCell = Cell;
-                Cell = destinationCell;
-                previousCell.Content = null;
-
                 cellChanged = true;
+                ChangeCell(destinationCell);
             }
 
             timeElapsed += Time.deltaTime;
@@ -94,6 +103,39 @@ public class DynamicActor : Actor
         inMovement = false;
         if (AnimationController != null)
             AnimationController.SetBool("isMoving", false);
+    }
+
+    /// <summary>
+    /// Determine the position on the y axis on the next cell.
+    /// </summary>
+    /// <param name="destinationCell">The cell to move to.</param>
+    /// <returns>The position on the y axis on the next cell.</returns>
+    private float GetYDestination(Cell destinationCell)
+    {
+        float yDestination = destinationCell.transform.position.y;
+        if (tag == "Crate")
+            yDestination += transform.localScale.y / 2;
+        else if (destinationCell.Trigger != null && destinationCell.Trigger.name.Contains("PressurePlate"))
+            yDestination += 0.025f;
+        else if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
+            yDestination += 0.35f;
+
+        return yDestination;
+    }
+
+    /// <summary>
+    /// Determine the position on the x axis on the next cell.
+    /// </summary>
+    /// <param name="destinationCell">The cell to move to.</param>
+    /// <returns>The position on the x axis on the next cell.</returns>
+    private float GetXDestination(Cell destinationCell)
+    {
+        float xDestination = destinationCell.transform.position.x;
+
+        if (destinationCell.Content != null && destinationCell.Content.tag == "Exit")
+            xDestination -= 0.05f;
+
+        return xDestination;
     }
 
     #endregion

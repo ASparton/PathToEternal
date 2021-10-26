@@ -22140,7 +22140,7 @@ MonoBehaviour:
   - {fileID: 763153759}
   - {fileID: 578825821}
   - {fileID: 22026229}
-  entryCell: {fileID: 1855262414}
+  entryCell: {fileID: 1997250921}
   exitCell: {fileID: 952934279}
   exitPortal: {fileID: 1155264923}
   player: {fileID: 1354291858}

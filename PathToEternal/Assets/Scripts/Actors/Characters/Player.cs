@@ -26,21 +26,7 @@ public class Player : Character
                 if (transform.rotation != GetRotationToDirection(xDirection, yDirection))
                     LookInDiretion(xDirection, yDirection);
                 else
-                {
-                    GridPosition pointedPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y);
-
-                    // Points on the horizontal axis
-                    if (xDirection != 0 && yDirection == 0)
-                        pointedPosition = new GridPosition(Cell.GridPosition.x + xDirection, Cell.GridPosition.y);
-                    // Or points on the vertical axis
-                    else if (xDirection == 0 && yDirection != 0)
-                        pointedPosition = new GridPosition(Cell.GridPosition.x, Cell.GridPosition.y + yDirection);
-                    // else -> diagonals are forbidden
-
-                    Cell pointedCell = LevelGrid.Instance.GetCell(pointedPosition);
-                    if (pointedCell != null)
-                        ExecuteAction(pointedCell);
-                }
+                    ExecuteAction(GetDirection(xDirection, yDirection));
             }
         }
     }
@@ -48,9 +34,11 @@ public class Player : Character
     /// <summary>
     /// Execute an action depending on the the next cell's content.
     /// </summary>
-    /// <param name="pointedCell">The position pointed by the player</param>
-    private void ExecuteAction(Cell pointedCell)
+    /// <param name="movementDirection">The direction where the player wants to go.</param>
+    private void ExecuteAction(Direction movementDirection)
     {
+        Cell pointedCell = LevelGrid.Instance.GetCell(Cell.GridPosition, movementDirection);
+
         if (pointedCell.Content != null)
         {
             switch (pointedCell.Content.tag)
@@ -58,22 +46,22 @@ public class Player : Character
                 // Futur actions to implement here
 
                 default: // Otherwise the player tries to move to the cell.
-                    HandleMovement(pointedCell);
+                    HandleMovement(movementDirection);
                     break;
             }
         }
         else // If the cell has no content, the player moves to it
-            HandleMovement(pointedCell);
+            HandleMovement(movementDirection);
     }
 
     /// <summary>
-    /// Tries to move to the given cell. If he can it notifies that he moved, otherwise it starts the "Can't move" animation.
+    /// Tries to move to the given direction. If he can it notifies that he moved, otherwise it starts the "Can't move" animation.
     /// </summary>
-    /// <param name="destinationCell">The cell to try to move to.</param>
-    private void HandleMovement(Cell destinationCell)
+    /// <param name="movementDirection">The direction to try to move to.</param>
+    private void HandleMovement(Direction movementDirection)
     {
-        if (MoveToGridPosition(destinationCell.GridPosition))
-            PlayerMovedEvent.Invoke(destinationCell);
+        if (MoveToGridPosition(movementDirection))
+            PlayerMovedEvent.Invoke(LevelGrid.Instance.GetCell(Cell.GridPosition, movementDirection));
         else
         {
             if (!inMovement && !isRotating)
@@ -91,94 +79,25 @@ public class Player : Character
         gameObject.transform.GetChild(1).GetChild(0).Find("Weapon").gameObject.SetActive(active);
     }
 
-    #region Player specific animations
-
-    /// <summary>
-    /// Make the player fall down and rotate to the entry cell position given.
-    /// </summary>
-    /// <param name="entryCellPosition">The entry cell position.</param>
-    public void Spawn(Vector3 entryCellPosition)
-    {
-        StartCoroutine(PlayerSpawnAnimation(entryCellPosition));
-    }
-
-    /// <summary>
-    /// Make the player rotate and decrease its scale to 0 during the end animation.
-    /// </summary>
-    /// <param name="endAnimationDuration">The duration of the animation</param>
-    /// <param name="usedToSpawn">True if the coroutine in used when spawning the player.</param>
-    /// <returns>Coroutine</returns>
-    public IEnumerator PlayerDizzyAnimation(float endAnimationDuration)
-    {
-        // Start animation
-        AnimationController.SetBool("isDizzy", true);
-
-        float timeElapsed = 0f;
-        while (timeElapsed < endAnimationDuration)
-        {
-            Vector3 eulerAngles = transform.rotation.eulerAngles;
-            transform.rotation = Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + 1f, eulerAngles.z));
-
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        // Stop animation
-        AnimationController.SetBool("isDizzy", false);
-    }
-
-    /// <summary>
-    /// Make the player fall down to the destination cell position given.
-    /// </summary>
-    /// <param name="destinationCellPosition">The destination cell position</param>
-    /// <returns>Coroutine</returns>
-    private IEnumerator PlayerSpawnAnimation(Vector3 destinationCellPosition)
-    {
-        // Start animation
-        AnimationController.SetBool("isDizzy", true);
-
-        Vector3 startPosition = new Vector3(destinationCellPosition.x, destinationCellPosition.y + 3f, destinationCellPosition.z);
-
-        Quaternion startRotation = Quaternion.AngleAxis(-180f, Vector3.up);
-        Quaternion finalRotation = Quaternion.AngleAxis(0, Vector3.up);
-
-        float timeElapsed = 0f;
-        while (timeElapsed < SpawnFallDuration)
-        {
-            transform.position = Vector3.Lerp(startPosition, destinationCellPosition, timeElapsed / SpawnFallDuration);
-            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / SpawnFallDuration);    
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.position = destinationCellPosition;
-        transform.rotation = finalRotation;
-
-        // Stop animation
-        AnimationController.SetBool("isDizzy", false);
-    }
-
-    /// <summary>
-    /// Play the shaking head no animations for 1 second.
-    /// </summary>
-    /// <returns>Coroutine</returns>
-    private IEnumerator PlayerCantMoveAnimation()
-    {
-        // Start animation
-        AnimationController.SetBool("cantMove", true);
-        inMovement = true;
-        SetWeaponsActive(false);
-
-        yield return new WaitForSeconds(1f);
-
-        // Stop animation
-        AnimationController.SetBool("cantMove", false);
-        inMovement = false;
-        SetWeaponsActive(true);
-    }
-
-    #endregion
     #region Direction choice management
+
+    /// <summary>
+    /// Determine the direction wanted depending on the given x and y axis value.
+    /// </summary>
+    /// <param name="x">The direction on the x axis (-1, 1 or 0).</param>
+    /// <param name="y">The direction on the y axis (-1, 1 or 0).</param>
+    /// <returns>The direction wanted</returns>
+    private Direction GetDirection(int x, int y)
+    {
+        if (x == 1 && y == 0)
+            return Direction.EAST;
+        else if (x == -1 && y == 0)
+            return Direction.WEST;
+        else if (x == 0 && y == 1)
+            return Direction.NORTH;
+        else
+            return Direction.SOUTH;
+    }
 
     /// <summary>
     /// Determine the direction the player is pointing to on the X axis depending on the active camera and his inputs.
@@ -362,6 +281,93 @@ public class Player : Character
         }
         else
             return 0;
+    }
+
+    #endregion
+    #region Player specific animations
+
+    /// <summary>
+    /// Make the player fall down and rotate to the entry cell position given.
+    /// </summary>
+    /// <param name="entryCellPosition">The entry cell position.</param>
+    public void Spawn(Vector3 entryCellPosition)
+    {
+        StartCoroutine(PlayerSpawnAnimation(entryCellPosition));
+    }
+
+    /// <summary>
+    /// Make the player rotate and decrease its scale to 0 during the end animation.
+    /// </summary>
+    /// <param name="endAnimationDuration">The duration of the animation</param>
+    /// <param name="usedToSpawn">True if the coroutine in used when spawning the player.</param>
+    /// <returns>Coroutine</returns>
+    public IEnumerator PlayerDizzyAnimation(float endAnimationDuration)
+    {
+        // Start animation
+        AnimationController.SetBool("isDizzy", true);
+
+        float timeElapsed = 0f;
+        while (timeElapsed < endAnimationDuration)
+        {
+            Vector3 eulerAngles = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + 1f, eulerAngles.z));
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Stop animation
+        AnimationController.SetBool("isDizzy", false);
+    }
+
+    /// <summary>
+    /// Make the player fall down to the destination cell position given.
+    /// </summary>
+    /// <param name="destinationCellPosition">The destination cell position</param>
+    /// <returns>Coroutine</returns>
+    private IEnumerator PlayerSpawnAnimation(Vector3 destinationCellPosition)
+    {
+        // Start animation
+        AnimationController.SetBool("isDizzy", true);
+
+        Vector3 startPosition = new Vector3(destinationCellPosition.x, destinationCellPosition.y + 3f, destinationCellPosition.z);
+
+        Quaternion startRotation = Quaternion.AngleAxis(-180f, Vector3.up);
+        Quaternion finalRotation = Quaternion.AngleAxis(0, Vector3.up);
+
+        float timeElapsed = 0f;
+        while (timeElapsed < SpawnFallDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, destinationCellPosition, timeElapsed / SpawnFallDuration);
+            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / SpawnFallDuration);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = destinationCellPosition;
+        transform.rotation = finalRotation;
+
+        // Stop animation
+        AnimationController.SetBool("isDizzy", false);
+    }
+
+    /// <summary>
+    /// Play the shaking head no animations for 1 second.
+    /// </summary>
+    /// <returns>Coroutine</returns>
+    private IEnumerator PlayerCantMoveAnimation()
+    {
+        // Start animation
+        AnimationController.SetBool("cantMove", true);
+        inMovement = true;
+        SetWeaponsActive(false);
+
+        yield return new WaitForSeconds(1f);
+
+        // Stop animation
+        AnimationController.SetBool("cantMove", false);
+        inMovement = false;
+        SetWeaponsActive(true);
     }
 
     #endregion

@@ -111,6 +111,38 @@ public class LevelGrid : MonoBehaviour
     }
 
     /// <summary>
+    /// Try to find the cell which has the same position as the start position + direction given and returns it.
+    /// </summary>
+    /// <param name="startPosition">The initial position of a cell.</param>
+    /// <param name="direction">The direction to go to from the start position.</param>
+    /// <returns>The cell that has the corresponding position and null if not found.</returns>
+    public Cell GetCell(GridPosition startPosition, Direction direction)
+    {
+        return GetCell(GetNextPosition(startPosition, direction));
+    }
+
+    /// <summary>
+    /// Calculate the next position depending on the start position and the direction given.
+    /// </summary>
+    /// <param name="startPosition">The initial position.</param>
+    /// <param name="direction">The direction to go to from the start position.</param>
+    /// <returns>The position of startPosition + direction</returns>
+    private static GridPosition GetNextPosition(GridPosition startPosition, Direction direction)
+    {
+        int x = startPosition.x, y = startPosition.y;
+        if (direction == Direction.EAST)
+            x++;
+        else if (direction == Direction.WEST)
+            x--;
+        else if (direction == Direction.NORTH)
+            y++;
+        else
+            y--;
+
+        return new GridPosition(x, y);
+    }
+
+    /// <summary>
     /// Called every time the player moved, verify he is on the exit cell to terminate the level.
     /// </summary>
     /// <param name="newPlayerPosition">The new current player cell</param>
