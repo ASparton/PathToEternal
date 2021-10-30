@@ -96,6 +96,16 @@ public class LevelGrid : MonoBehaviour
     }
 
     /// <summary>
+    /// Enable or disable in-game inputs.
+    /// </summary>
+    /// <param name="allowed">True to enable, false to disable.</param>
+    public void SetGameInputsEnabled(bool allowed)
+    {
+        player.InputsEnabled = allowed;
+        CameraController.Instance.InputsEnabled = allowed;
+    }
+
+    /// <summary>
     /// Try to find the cell which has the same position as the one given and returns it.
     /// </summary>
     /// <param name="cellPosition">The position of the cell in the grid.</param>
@@ -162,5 +172,6 @@ public class LevelGrid : MonoBehaviour
     private void OnExitAnimationFinished()
     {
         player.transform.localScale = Vector3.zero;
+        LevelEndController.Instance.StartAnimation();
     }
 }

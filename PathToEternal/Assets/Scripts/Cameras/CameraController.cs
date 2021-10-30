@@ -12,9 +12,10 @@ public class CameraController : MonoBehaviour
     [SerializeField][Tooltip("The player camera.")]
     private ThirdPersonCamera PlayerCamera;
 
-    private GenericCamera _currentCamera;   // The current active camera
+    private GenericCamera _currentCamera;   // The current active camera}
 
-    private bool _inCinematic;  // To know when the current camera is showing a cinematic (to stop taking game inputs from the player)
+    private bool _inputsEnabled;
+    public bool InputsEnabled { get; set; }
 
     /// <summary>
     /// Assure the singleton pattern.
@@ -44,6 +45,8 @@ public class CameraController : MonoBehaviour
             _currentCamera = PlayerCamera;
             ActivateCamera(LevelCamera);
         }
+
+        _inputsEnabled = true;
     }
 
     /// <summary>
@@ -51,7 +54,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.C))
+        if (Input.GetKeyUp(KeyCode.C) && _inputsEnabled)
         {
             if (LevelCamera.gameObject.activeInHierarchy)
                 ActivateCamera(PlayerCamera);
@@ -81,13 +84,4 @@ public class CameraController : MonoBehaviour
 
     /// <returns>The current active camera</returns>
     public GenericCamera GetCurrentCamera() => _currentCamera;
-
-    /// <summary>
-    /// Indicate to the camera controller that a cinematic is played or finished.
-    /// </summary>
-    /// <param name="inCinematic">True to indicate that a cinematic is playing, false to indicate that it is finished.</param>
-    public void SetInCinematic(bool inCinematic) => _inCinematic = inCinematic;
-
-    /// <returns>True if a cinematic is currently playing, false otherwise.</returns>
-    public bool IsInCinematic() => _inCinematic;
 }

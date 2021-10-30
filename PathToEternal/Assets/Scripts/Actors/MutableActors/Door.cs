@@ -68,12 +68,12 @@ public class Door : MutableActor
         // Activate action camera
         GenericCamera previousCamera = CameraController.Instance.GetCurrentCamera();
         CameraController.Instance.ActivateCamera(ActionCamera);
-        CameraController.Instance.SetInCinematic(true);
+        LevelGrid.Instance.SetGameInputsEnabled(false);
 
         yield return new WaitForSecondsRealtime(_actionAnimationDuration + 2f);
 
         // Deactivate the action camera
         CameraController.Instance.ActivateCamera(previousCamera);
-        CameraController.Instance.SetInCinematic(false);
+        LevelGrid.Instance.SetGameInputsEnabled(true);
     }
 }
