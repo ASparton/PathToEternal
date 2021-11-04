@@ -12,28 +12,79 @@ public abstract class MutableActor : Actor
     private List<Trigger> _triggers;
     public List<Trigger> Triggers { get { return _triggers; } }
 
+    [SerializeField][Tooltip("When the action has been done, all the triggers will stay activated.")]
+    private bool _triggersActivatedWhenActionDone;
+
     [Header("Camera")]
     [SerializeField][Tooltip("The camera that can show the action of the mutable actor when triggered.")]
     protected GenericCamera ActionCamera;
 
     [Header("Action")]
+    [SerializeField][Tooltip("Set the mutable actor's action done or not.")]
+    private bool _isActionDone = false;
+    public bool IsActionDone { get { return _isActionDone; } }
+
     [SerializeField][Tooltip("The duration of the action animation.")]
     protected float _actionAnimationDuration;
 
-    /// <summary>
-    /// Execute the mutable actor's trigger action.
-    /// </summary>
-    /// <param name="trigger">The Trigger that triggered the action.</param>
-    public abstract void ExecuteTriggerAction(Trigger trigger);
+    #region Delegates management
+
+    private void OnEnable()
+    {
+        _triggers.ForEach(trigger => trigger.TriggerActivatedEvent += OnTriggerActivated);
+        _triggers.ForEach(trigger => trigger.TriggerDeactivatedEvent += OnTriggerDeactivated);
+    }
+
+    private void OnDisable()
+    {
+        _triggers.ForEach(trigger => trigger.TriggerActivatedEvent -= OnTriggerActivated);
+        _triggers.ForEach(trigger => trigger.TriggerDeactivatedEvent -= OnTriggerDeactivated);
+    }
+
+    #endregion
 
     /// <summary>
-    /// Execute the mutable actor's untrigger action.
-    /// </summary>
-    /// <param name="trigger">The Trigger that untriggered the action.</param>
-    public abstract void ExecuteUntriggerAction(Trigger triger);
-
-    /// <summary>
-    /// Deactivate the action camera
+    /// Deactivate the action camera.
     /// </summary>
     private void Awake() => ActionCamera.gameObject.SetActive(false);
+
+    /// <summary>
+    /// Execute the mutable actor's action if all its defined triggers are triggered.
+    /// </summary>
+    private void OnTriggerActivated()
+    {
+        if (!_isActionDone && _triggers.TrueForAll(t => t.IsTriggered))
+        {
+            ExecuteAction();
+            _isActionDone = true;
+
+            if (_triggersActivatedWhenActionDone)
+                _triggers.ForEach(trigger => trigger.IsTriggered = true);
+        }
+    }
+
+    /// <summary>
+    /// Undo the mutable actor's action if it is done.
+    /// </summary>
+    private void OnTriggerDeactivated()
+    {
+        if (_isActionDone && !_triggersActivatedWhenActionDone)
+        {
+            UndoAction();
+            _isActionDone = false;
+        }
+
+        if (_triggersActivatedWhenActionDone)
+            _triggers.ForEach(trigger => trigger.IsTriggered = true);
+    }
+
+    /// <summary>
+    /// Execute the mutable actor's action.
+    /// </summary>
+    protected abstract void ExecuteAction();
+
+    /// <summary>
+    /// Undo the mutable actor's action.
+    /// </summary>
+    protected abstract void UndoAction();
 }

@@ -6,13 +6,7 @@ using UnityEngine;
 /// </summary>
 public class PressurePlate : Trigger
 {
-    protected override void setAspect(bool triggeredAspect)
-    {
-        if (triggeredAspect)
-            StartCoroutine(ChangeAspectTo(true));
-        else
-            StartCoroutine(ChangeAspectTo(false));
-    }
+    protected override void SetAspect(bool triggeredAspect) => StartCoroutine(ChangeAspectTo(triggeredAspect));
 
     /// <summary>
     /// Interpolate the position of the pressure plate to the pressed or not pressed position.

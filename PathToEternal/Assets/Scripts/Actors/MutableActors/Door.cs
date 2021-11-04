@@ -7,28 +7,20 @@ using UnityEngine;
 /// </summary>
 public class Door : MutableActor
 {
-    [SerializeField][Tooltip("Set the door open or not at the start of the level.")]
-    private bool _isOpen = false;
-    public bool IsOpen { get { return _isOpen; } }
-
     /// <summary>
     /// Open the door.
     /// </summary>
-    /// <param name="trigger">The trigger that triggered the action.</param>
-    public override void ExecuteTriggerAction(Trigger trigger)
+    protected override void ExecuteAction()
     {
-        _isOpen = true;
         StartCoroutine(PlayActionCinematic());
         StartCoroutine(SetDoorState(true));
     }
 
     /// <summary>
-    /// Close the door (become a wall).
+    /// Close the door (becomes a wall).
     /// </summary>
-    /// <param name="trigger">The trigger that triggered the action.</param>
-    public override void ExecuteUntriggerAction(Trigger trigger)
+    protected override void UndoAction()
     {
-        _isOpen = false;
         StartCoroutine(PlayActionCinematic());
         StartCoroutine(SetDoorState(false));
     }

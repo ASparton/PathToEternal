@@ -36,7 +36,7 @@ public class DynamicActor : Actor
         {
             if (nextCell.Content != null && nextCell.Content.tag == "Wall")
                 return false;
-            if (nextCell.Door != null && !nextCell.Door.IsOpen)   // Does not move if there is a closed door on the cell
+            if (nextCell.Door != null && !nextCell.Door.IsActionDone)   // Does not move if there is a closed door on the cell
                 return false;
             if (nextCell.Content != null && nextCell.Content.tag == "Crate")
             {
