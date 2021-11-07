@@ -37,6 +37,6 @@ public class LevelEndController : MonoBehaviour
     {
         gameObject.SetActive(true);
         _animationController.enabled = true;
-        LevelGrid.Instance.SetGameInputsEnabled(false);
+        LevelGrid.Instance.GameInputsEnabled = false;
     }
 }

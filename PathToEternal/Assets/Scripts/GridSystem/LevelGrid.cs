@@ -13,19 +13,29 @@ public class LevelGrid : MonoBehaviour
 
     [Header("Grid level informations")]
     [SerializeField][Tooltip("All the cells of the level grid.")]
-    private List<Cell> cells = new List<Cell>();
+    private List<Cell> _cells = new List<Cell>();
 
     [SerializeField][Tooltip("The entry cell of the grid where the player start.")]
-    private Cell entryCell = null;
-
-    [SerializeField][Tooltip("The exit cell of the grid that the player has to reach.")]
-    private Cell exitCell = null;
+    private Cell _entryCell = null;
+    private Cell _exitCell = null;  // Equivalent to the portal cell.
 
     [SerializeField][Tooltip("The exit portal of the level.")]
     private ExitPortalController exitPortal = null;
 
     [SerializeField][Tooltip("The player character.")]
     private Player player = null;
+
+    private bool _gameInputsEnabled;
+    public bool GameInputsEnabled 
+    {
+        get { return _gameInputsEnabled; }
+        set
+        {
+            _gameInputsEnabled = value;
+            player.InputsEnabled = value;
+            CameraController.Instance.InputsEnabled = value;
+        }
+    }
 
     #endregion
 
@@ -34,15 +44,9 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        if (entryCell == null)
+        if (_entryCell == null)
         {
             print("No entry cell found.");
-            return;
-        }
-
-        if (exitCell == null)
-        {
-            print("No exit cell found.");
             return;
         }
 
@@ -51,6 +55,8 @@ public class LevelGrid : MonoBehaviour
             print("No exit portal found.");
             return;
         }
+        else
+            _exitCell = exitPortal.Cell;
 
         if (player == null)
         {
@@ -91,18 +97,8 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        player.Cell = entryCell;
-        player.Spawn(entryCell.transform.position);
-    }
-
-    /// <summary>
-    /// Enable or disable in-game inputs.
-    /// </summary>
-    /// <param name="allowed">True to enable, false to disable.</param>
-    public void SetGameInputsEnabled(bool allowed)
-    {
-        player.InputsEnabled = allowed;
-        CameraController.Instance.InputsEnabled = allowed;
+        player.Cell = _entryCell;
+        player.Spawn(_entryCell.transform.position);
     }
 
     /// <summary>
@@ -112,7 +108,7 @@ public class LevelGrid : MonoBehaviour
     /// <returns>The cell that has the corresponding position and null if not found.</returns>
     public Cell GetCell(GridPosition cellPosition)
     {
-        foreach (Cell cell in cells)
+        foreach (Cell cell in _cells)
         {
             if (cell.GridPosition.Equals(cellPosition))
                 return cell;
@@ -158,7 +154,7 @@ public class LevelGrid : MonoBehaviour
     /// <param name="newPlayerPosition">The new current player cell</param>
     private void onPlayerMoved(Cell newPlayerCell)
     {
-        if (newPlayerCell.GridPosition.Equals(exitCell.GridPosition))
+        if (newPlayerCell.GridPosition.Equals(_exitCell.GridPosition))
         {
             exitPortal.StartExitAnimation();
             StartCoroutine(player.PlayerDizzyAnimation(exitPortal.EndAnimationDuration));

@@ -11,16 +11,15 @@ public class Player : Character
     [SerializeField][Tooltip("Duration of the spawn animation.")]
     private float SpawnFallDuration = 5f;
 
-    private bool _inputsEnabled;
     public bool InputsEnabled { get; set; }
-    private void Start() => _inputsEnabled = true;
+    private void Start() => InputsEnabled = true;
 
     /// <summary>
     ///  Listen and react to the user inputs.
     /// </summary>
     private void Update()
     {
-        if (!inMovement && !isRotating && _inputsEnabled)
+        if (!inMovement && !isRotating && InputsEnabled)
         {
             int xDirection = GetXDirection(), yDirection = GetYDirection();
 
@@ -331,7 +330,7 @@ public class Player : Character
     /// <returns>Coroutine</returns>
     private IEnumerator PlayerSpawnAnimation(Vector3 destinationCellPosition)
     {
-        CameraController.Instance.InputsEnabled = false;
+        LevelGrid.Instance.GameInputsEnabled = false;
 
         // Start animation
         AnimationController.SetBool("isDizzy", true);
@@ -356,7 +355,7 @@ public class Player : Character
         // Stop animation
         AnimationController.SetBool("isDizzy", false);
 
-        CameraController.Instance.InputsEnabled = true;
+        LevelGrid.Instance.GameInputsEnabled = true;
     }
 
     /// <summary>

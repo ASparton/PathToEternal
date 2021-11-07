@@ -48,8 +48,8 @@ MonoBehaviour:
   _cell: {fileID: 0}
   _matchingTags:
   - Player
+  - Crate
   _keepTriggered: 1
-  _mutableActor: {fileID: 0}
 --- !u!33 &2827306389770601797
 MeshFilter:
   m_ObjectHideFlags: 0

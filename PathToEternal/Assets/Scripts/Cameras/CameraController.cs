@@ -14,7 +14,6 @@ public class CameraController : MonoBehaviour
 
     private GenericCamera _currentCamera;   // The current active camera}
 
-    private bool _inputsEnabled;
     public bool InputsEnabled { get; set; }
 
     /// <summary>
@@ -46,7 +45,7 @@ public class CameraController : MonoBehaviour
             ActivateCamera(LevelCamera);
         }
 
-        _inputsEnabled = true;
+        InputsEnabled = true;
     }
 
     /// <summary>
@@ -54,7 +53,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.C) && _inputsEnabled)
+        if (Input.GetKeyUp(KeyCode.C) && InputsEnabled)
         {
             if (LevelCamera.gameObject.activeInHierarchy)
                 ActivateCamera(PlayerCamera);

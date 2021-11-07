@@ -72,33 +72,36 @@ public class PathCamera : GenericCamera
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.RightArrow))
+        if (LevelGrid.Instance.GameInputsEnabled)
         {
-            currentLocation = currentLocation.Next;
-            if (currentLocation == null)
-                currentLocation = locations.First;
+            if (Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                currentLocation = currentLocation.Next;
+                if (currentLocation == null)
+                    currentLocation = locations.First;
 
-            currentRotation = currentRotation.Next;
-            if (currentRotation == null)
-                currentRotation = rotations.First;
+                currentRotation = currentRotation.Next;
+                if (currentRotation == null)
+                    currentRotation = rotations.First;
 
-            currentOrthographic = currentOrthographic.Next;
-            if (currentOrthographic == null)
-                currentOrthographic = orthographicPositions.First;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            currentLocation = currentLocation.Previous;
-            if (currentLocation == null)
-                currentLocation = locations.Last;
+                currentOrthographic = currentOrthographic.Next;
+                if (currentOrthographic == null)
+                    currentOrthographic = orthographicPositions.First;
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                currentLocation = currentLocation.Previous;
+                if (currentLocation == null)
+                    currentLocation = locations.Last;
 
-            currentRotation = currentRotation.Previous;
-            if (currentRotation == null)
-                currentRotation = rotations.Last;
+                currentRotation = currentRotation.Previous;
+                if (currentRotation == null)
+                    currentRotation = rotations.Last;
 
-            currentOrthographic = currentOrthographic.Previous;
-            if (currentOrthographic == null)
-                currentOrthographic = orthographicPositions.Last;
+                currentOrthographic = currentOrthographic.Previous;
+                if (currentOrthographic == null)
+                    currentOrthographic = orthographicPositions.Last;
+            }
         }
     }
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4577192369141865620}
   - component: {fileID: 4636442812375808839}
   m_Layer: 0
-  m_Name: DoorMutable
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

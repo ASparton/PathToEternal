@@ -57,9 +57,6 @@ public abstract class MutableActor : Actor
         {
             ExecuteAction();
             _isActionDone = true;
-
-            if (_triggersActivatedWhenActionDone)
-                _triggers.ForEach(trigger => trigger.IsTriggered = true);
         }
     }
 
@@ -73,9 +70,6 @@ public abstract class MutableActor : Actor
             UndoAction();
             _isActionDone = false;
         }
-
-        if (_triggersActivatedWhenActionDone)
-            _triggers.ForEach(trigger => trigger.IsTriggered = true);
     }
 
     /// <summary>
