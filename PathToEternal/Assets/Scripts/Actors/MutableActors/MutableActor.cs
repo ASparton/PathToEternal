@@ -25,7 +25,7 @@ public abstract class MutableActor : Actor
     public bool IsActionDone { get { return _isActionDone; } }
 
     [SerializeField][Tooltip("The duration of the action animation.")]
-    protected float _actionAnimationDuration;
+    protected float _actionAnimationDuration = 1f;
 
     #region Delegates management
 

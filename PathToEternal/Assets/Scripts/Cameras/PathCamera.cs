@@ -11,45 +11,45 @@ public class PathCamera : GenericCamera
     #region Editor location & camera lists
 
     [SerializeField][Tooltip("All the locations of the camera.")]
-    private List<Vector3> locationList;
+    private List<Vector3> _locationList;
 
     [SerializeField][Tooltip("All the locations of the camera.")]
-    private List<Quaternion> rotationList;
+    private List<Quaternion> _rotationList;
 
     [SerializeField][Tooltip("To set a position as perspective or not.")]
-    private List<bool> orthographicList;
+    private List<bool> _orthographicList;
 
     #endregion
 
     [SerializeField][Tooltip("The duration in second of the camera transitions.")]
-    private float transitionSpeed = 1;
+    private float _transitionSpeed = 1;
 
-    private LinkedList<Vector3> locations;
-    private LinkedListNode<Vector3> currentLocation;
+    private LinkedList<Vector3> _locations;
+    private LinkedListNode<Vector3> _currentLocation;
 
-    private LinkedList<Quaternion> rotations;
-    private LinkedListNode<Quaternion> currentRotation;
+    private LinkedList<Quaternion> _rotations;
+    private LinkedListNode<Quaternion> _currentRotation;
 
-    private LinkedList<bool> orthographicPositions;
-    private LinkedListNode<bool> currentOrthographic;
+    private LinkedList<bool> _orthographicPositions;
+    private LinkedListNode<bool> _currentOrthographic;
 
     /// <summary>
     /// Linked lists setup.
     /// </summary>
     private void Awake()
     {
-        locations = new LinkedList<Vector3>();
-        rotations = new LinkedList<Quaternion>();
-        orthographicPositions = new LinkedList<bool>();
+        _locations = new LinkedList<Vector3>();
+        _rotations = new LinkedList<Quaternion>();
+        _orthographicPositions = new LinkedList<bool>();
 
-        foreach (Vector3 location in locationList)
-            locations.AddLast(location);
+        foreach (Vector3 location in _locationList)
+            _locations.AddLast(location);
 
-        foreach (Quaternion rotation in rotationList)
-            rotations.AddLast(rotation);
+        foreach (Quaternion rotation in _rotationList)
+            _rotations.AddLast(rotation);
 
-        foreach (bool perspective in orthographicList)
-            orthographicPositions.AddLast(perspective);
+        foreach (bool perspective in _orthographicList)
+            _orthographicPositions.AddLast(perspective);
     }
 
     /// <summary>
@@ -57,14 +57,14 @@ public class PathCamera : GenericCamera
     /// </summary>
     private void Start()
     {
-        currentLocation = locations.First;
-        currentRotation = rotations.First;
-        currentOrthographic = orthographicPositions.First;
+        _currentLocation = _locations.First;
+        _currentRotation = _rotations.First;
+        _currentOrthographic = _orthographicPositions.First;
 
-        transform.position = currentLocation.Value;
-        transform.rotation = currentRotation.Value;
+        transform.position = _currentLocation.Value;
+        transform.rotation = _currentRotation.Value;
         Camera camera = (Camera)GetComponent("Camera");
-        camera.orthographic = currentOrthographic.Value;
+        camera.orthographic = _currentOrthographic.Value;
     }
 
     /// <summary>
@@ -76,31 +76,31 @@ public class PathCamera : GenericCamera
         {
             if (Input.GetKeyUp(KeyCode.RightArrow))
             {
-                currentLocation = currentLocation.Next;
-                if (currentLocation == null)
-                    currentLocation = locations.First;
+                _currentLocation = _currentLocation.Next;
+                if (_currentLocation == null)
+                    _currentLocation = _locations.First;
 
-                currentRotation = currentRotation.Next;
-                if (currentRotation == null)
-                    currentRotation = rotations.First;
+                _currentRotation = _currentRotation.Next;
+                if (_currentRotation == null)
+                    _currentRotation = _rotations.First;
 
-                currentOrthographic = currentOrthographic.Next;
-                if (currentOrthographic == null)
-                    currentOrthographic = orthographicPositions.First;
+                _currentOrthographic = _currentOrthographic.Next;
+                if (_currentOrthographic == null)
+                    _currentOrthographic = _orthographicPositions.First;
             }
             else if (Input.GetKeyUp(KeyCode.LeftArrow))
             {
-                currentLocation = currentLocation.Previous;
-                if (currentLocation == null)
-                    currentLocation = locations.Last;
+                _currentLocation = _currentLocation.Previous;
+                if (_currentLocation == null)
+                    _currentLocation = _locations.Last;
 
-                currentRotation = currentRotation.Previous;
-                if (currentRotation == null)
-                    currentRotation = rotations.Last;
+                _currentRotation = _currentRotation.Previous;
+                if (_currentRotation == null)
+                    _currentRotation = _rotations.Last;
 
-                currentOrthographic = currentOrthographic.Previous;
-                if (currentOrthographic == null)
-                    currentOrthographic = orthographicPositions.Last;
+                _currentOrthographic = _currentOrthographic.Previous;
+                if (_currentOrthographic == null)
+                    _currentOrthographic = _orthographicPositions.Last;
             }
         }
     }
@@ -110,16 +110,16 @@ public class PathCamera : GenericCamera
     /// </summary>
     private void LateUpdate()
     {
-        if (transform.position != currentLocation.Value)
+        if (transform.position != _currentLocation.Value)
         {
             Camera camera = (Camera)GetComponent("Camera");
-            camera.orthographic = currentOrthographic.Value;
+            camera.orthographic = _currentOrthographic.Value;
 
             if (camera.orthographic)
-                transform.position = Vector3.Lerp(transform.position, currentLocation.Value, Time.deltaTime * transitionSpeed);
+                transform.position = Vector3.Lerp(transform.position, _currentLocation.Value, Time.deltaTime * _transitionSpeed);
             else
-                transform.localPosition = Vector3.Lerp(transform.localPosition, currentLocation.Value, Time.deltaTime * transitionSpeed);
-            transform.rotation = Quaternion.Lerp(transform.rotation, currentRotation.Value, Time.deltaTime * transitionSpeed);
+                transform.localPosition = Vector3.Lerp(transform.localPosition, _currentLocation.Value, Time.deltaTime * _transitionSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, _currentRotation.Value, Time.deltaTime * _transitionSpeed);
         }
     }
 }

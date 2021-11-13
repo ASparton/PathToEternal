@@ -8,6 +8,7 @@ TagManager:
   - Trigger
   - Exit
   - Crate
+  - Enemy
   layers:
   - Default
   - TransparentFX

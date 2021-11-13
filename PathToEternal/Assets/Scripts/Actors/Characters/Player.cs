@@ -1,15 +1,27 @@
 using System.Collections;
 using UnityEngine;
 
-public class Player : Character
+public class Player : DynamicActor
 {
-    // Delegate indicating where the player moved every time he did
-    public delegate void PlayerMoved(Cell newCell);
-    public static event PlayerMoved PlayerMovedEvent;
-
     [Header("Animations")]
     [SerializeField][Tooltip("Duration of the spawn animation.")]
-    private float SpawnFallDuration = 5f;
+    private float _spawnFallDuration = 5f;
+
+    #region Delegates
+
+    // Delegate indicating where the player begins to move every time he does
+    public delegate void PlayerStartMoving(Cell newCell);
+    public static event PlayerStartMoving PlayerStartMovingEvent;
+
+    // Delegate indicating that the player has finished his movement
+    public delegate void PlayerFinishedMoving(Cell newCell);
+    public static event PlayerFinishedMoving PlayerFinishedMovingEvent;
+
+    private void OnEnable() => EnemyPath.EnemyPAttackedEvent += OnEnemyPAttackFinished;
+
+    private void OnDisable() => EnemyPath.EnemyPAttackedEvent -= OnEnemyPAttackFinished;
+
+    #endregion
 
     public bool InputsEnabled { get; set; }
     private void Start() => InputsEnabled = true;
@@ -29,33 +41,12 @@ public class Player : Character
                 if (transform.rotation != GetRotationToDirection(xDirection, yDirection))
                     LookInDiretion(xDirection, yDirection);
                 else
-                    ExecuteAction(GetDirection(xDirection, yDirection));
+                    HandleMovement(GetDirection(xDirection, yDirection));
             }
         }
     }
 
-    /// <summary>
-    /// Execute an action depending on the the next cell's content.
-    /// </summary>
-    /// <param name="movementDirection">The direction where the player wants to go.</param>
-    private void ExecuteAction(Direction movementDirection)
-    {
-        Cell pointedCell = LevelGrid.Instance.GetCell(Cell.GridPosition, movementDirection);
-
-        if (pointedCell.Content != null)
-        {
-            switch (pointedCell.Content.tag)
-            {
-                // Futur actions to implement here
-
-                default: // Otherwise the player tries to move to the cell.
-                    HandleMovement(movementDirection);
-                    break;
-            }
-        }
-        else // If the cell has no content, the player moves to it
-            HandleMovement(movementDirection);
-    }
+    #region Movements
 
     /// <summary>
     /// Tries to move to the given direction. If he can it notifies that he moved, otherwise it starts the "Can't move" animation.
@@ -63,14 +54,55 @@ public class Player : Character
     /// <param name="movementDirection">The direction to try to move to.</param>
     private void HandleMovement(Direction movementDirection)
     {
-        if (MoveToGridPosition(movementDirection))
-            PlayerMovedEvent.Invoke(LevelGrid.Instance.GetCell(Cell.GridPosition, movementDirection));
-        else
-        {
-            if (!inMovement && !isRotating)
-                StartCoroutine(PlayerCantMoveAnimation());
-        }
+        if (!MoveToGridPosition(movementDirection) && !inMovement && !isRotating)
+            StartCoroutine(PlayerCantMoveAnimation());
     }
+
+    /// <summary>
+    /// Interpolate the position of the player to the given destination cell position.
+    /// </summary>
+    /// <param name="destinationCell">The destination cell</param>
+    /// <returns>Corountine</returns>
+    protected override IEnumerator MoveToCell(Cell destinationCell)
+    {
+        Vector3 finalDestination = new Vector3(GetXDestination(destinationCell), GetYDestination(destinationCell), destinationCell.transform.position.z);
+        Vector3 startPosition = transform.position;
+
+        inMovement = true;
+        if (AnimationController != null)
+            AnimationController.SetBool("isMoving", true);
+
+        // Indicates that the dynamic player has started his movement
+        PlayerStartMovingEvent?.Invoke(destinationCell);
+
+        bool cellChanged = false;
+
+        float timeElapsed = 0f;
+        while (timeElapsed < _cellTransitionDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / _cellTransitionDuration);
+
+            // Cell changing
+            if (Vector3.Distance(transform.position, finalDestination) < 0.5f && !cellChanged)
+            {
+                cellChanged = true;
+                ChangeCell(destinationCell);
+            }
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = finalDestination;
+        inMovement = false;
+        if (AnimationController != null)
+            AnimationController.SetBool("isMoving", false);
+
+        // Indicates that the player has finished his movement
+        PlayerFinishedMovingEvent?.Invoke(destinationCell);
+    }
+
+    #endregion
 
     /// <summary>
     /// Activate or deactivate the player weapons.
@@ -85,85 +117,47 @@ public class Player : Character
     #region Direction choice management
 
     /// <summary>
-    /// Determine the direction wanted depending on the given x and y axis value.
+    /// Determine the direction the player is pointing to on the X axis depending on his inputs.
     /// </summary>
-    /// <param name="x">The direction on the x axis (-1, 1 or 0).</param>
-    /// <param name="y">The direction on the y axis (-1, 1 or 0).</param>
-    /// <returns>The direction wanted</returns>
-    private Direction GetDirection(int x, int y)
-    {
-        if (x == 1 && y == 0)
-            return Direction.EAST;
-        else if (x == -1 && y == 0)
-            return Direction.WEST;
-        else if (x == 0 && y == 1)
-            return Direction.NORTH;
-        else
-            return Direction.SOUTH;
-    }
-
-    /// <summary>
-    /// Determine the direction the player is pointing to on the X axis depending on the active camera and his inputs.
-    /// </summary>
-    /// <returns>The direction the player is pointing to on the X axis depending on the active camera and his inputs.</returns>
+    /// <returns>The direction the player is pointing to on the X axis depending on his inputs.</returns>
     private int GetXDirection()
     {
         int xDirection = 0;
 
         if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.A))
-        {
-            if (CameraController.Instance.IsLevelCameraActive())
-                xDirection = -1;
-            else
-                xDirection = GetXDirectionOnKey(KeyCode.Q);
-        }
+            xDirection = GetXDirectionOnKey(KeyCode.Q);
 
         else if (Input.GetKeyUp(KeyCode.D))
-        {
-            if (CameraController.Instance.IsLevelCameraActive())
-                xDirection = 1;
-            else
-                xDirection = GetXDirectionOnKey(KeyCode.D);
-        }
+            xDirection = GetXDirectionOnKey(KeyCode.D);
 
-        else if (Input.GetKeyUp(KeyCode.S) && !CameraController.Instance.IsLevelCameraActive())
+        else if (Input.GetKeyUp(KeyCode.S))
             xDirection = GetXDirectionOnKey(KeyCode.S);
 
-        else if ((Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.W)) && !CameraController.Instance.IsLevelCameraActive())
+        else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.W))
             xDirection = GetXDirectionOnKey(KeyCode.Z);
 
         return xDirection;
     }
 
     /// <summary>
-    /// Determine the direction the player is pointing to on the Y axis depending on the active camera and his inputs.
+    /// Determine the direction the player is pointing to on the Y axis depending on his inputs.
     /// </summary>
-    /// <returns>The direction the player is pointing to on the Y axis depending on the active camera and his inputs.</returns>
+    /// <returns>The direction the player is pointing to on the Y axis depending on his inputs.</returns>
     private int GetYDirection()
     {
         int yDirection = 0;
 
-        if ((Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.A)) && !CameraController.Instance.IsLevelCameraActive())
+        if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.A))
             yDirection = GetYDirectionOnKey(KeyCode.Q);
 
-        else if (Input.GetKeyUp(KeyCode.D) && !CameraController.Instance.IsLevelCameraActive())
+        else if (Input.GetKeyUp(KeyCode.D))
             yDirection = GetYDirectionOnKey(KeyCode.D);
 
         else if (Input.GetKeyUp(KeyCode.S))
-        {
-            if (CameraController.Instance.IsLevelCameraActive())
-                yDirection = -1;
-            else
-                yDirection = GetYDirectionOnKey(KeyCode.S);
-        }
+            yDirection = GetYDirectionOnKey(KeyCode.S);
 
         else if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.W))
-        {
-            if (CameraController.Instance.IsLevelCameraActive())
-                yDirection = 1;
-            else
-                yDirection = GetYDirectionOnKey(KeyCode.Z);
-        }
+            yDirection = GetYDirectionOnKey(KeyCode.Z);
 
         return yDirection;
     }
@@ -341,10 +335,10 @@ public class Player : Character
         Quaternion finalRotation = Quaternion.AngleAxis(0, Vector3.up);
 
         float timeElapsed = 0f;
-        while (timeElapsed < SpawnFallDuration)
+        while (timeElapsed < _spawnFallDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, destinationCellPosition, timeElapsed / SpawnFallDuration);
-            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / SpawnFallDuration);
+            transform.position = Vector3.Lerp(startPosition, destinationCellPosition, timeElapsed / _spawnFallDuration);
+            transform.rotation = Quaternion.Lerp(startRotation, finalRotation, timeElapsed / _spawnFallDuration);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
@@ -375,6 +369,33 @@ public class Player : Character
         AnimationController.SetBool("cantMove", false);
         inMovement = false;
         SetWeaponsActive(true);
+    }
+
+    /// <summary>
+    /// Play the die animation.
+    /// </summary>
+    /// <param name="enemyCell">The current enemy cell.</param>
+    private void OnEnemyPAttackFinished(Cell enemyCell)
+    {
+        if (AnimationController != null)
+        {
+            _rotationDuration = 0.5f;
+            LookInDiretion(enemyCell.GridPosition.x - Cell.GridPosition.x, enemyCell.GridPosition.y - Cell.GridPosition.y);
+
+            AnimationController.SetBool("die", true);
+            Invoke("StopDieAnimation", 1.1f);
+        }
+    }
+
+    /// <summary>
+    /// Stop the die animation, disable game inputs and launch the game over animation.
+    /// </summary>
+    private void StopDieAnimation()
+    {
+        AnimationController.SetBool("die", false);
+        LevelGrid.Instance.GameInputsEnabled = false;
+
+        GameOverController.Instance.StartAnimation();
     }
 
     #endregion

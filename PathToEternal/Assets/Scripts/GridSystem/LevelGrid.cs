@@ -77,7 +77,7 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        Player.PlayerMovedEvent += onPlayerMoved;
+        Player.PlayerStartMovingEvent += OnPlayerMoved;
         ExitPortalController.ExitAnimationFinishedEvent += OnExitAnimationFinished;
     }
 
@@ -86,7 +86,7 @@ public class LevelGrid : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        Player.PlayerMovedEvent -= onPlayerMoved;
+        Player.PlayerStartMovingEvent -= OnPlayerMoved;
         ExitPortalController.ExitAnimationFinishedEvent -= OnExitAnimationFinished;
     }
 
@@ -152,7 +152,7 @@ public class LevelGrid : MonoBehaviour
     /// Called every time the player moved, verify he is on the exit cell to terminate the level.
     /// </summary>
     /// <param name="newPlayerPosition">The new current player cell</param>
-    private void onPlayerMoved(Cell newPlayerCell)
+    private void OnPlayerMoved(Cell newPlayerCell)
     {
         if (newPlayerCell.GridPosition.Equals(_exitCell.GridPosition))
         {

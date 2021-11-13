@@ -8,7 +8,7 @@ public class Cell : MonoBehaviour
     public GridPosition GridPosition;     // The position of the cell on the grid
 
     private Actor _content;
-    public Actor Content    // The possible actor that the cell can contains
+    public Actor Content    // The possible actor that the cell can contain
     { 
         get { return _content; }
         set // Also set the Trigger as triggered if the content tag is contained in the Trigger matching tags
@@ -27,12 +27,13 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public Trigger Trigger { get; set; }    // The possible trigger that the cell can contains
-    public Door Door { get; set; }          // The possible door the cell can contains
+    public Trigger Trigger { get; set; }    // The possible trigger that the cell can contain
+    public Door Door { get; set; }          // The possible door the cell can contain
+    public EnemyPath Enemy { get; set; }    // The possible enemy the cell can contain
 
 
     /// <summary>
-    /// Set and fix the grid position of the cell.
+    /// Set the grid position of the cell.
     /// </summary>
     private void Awake() => GridPosition = new GridPosition((int)transform.localPosition.x, (int)transform.localPosition.z);
 }

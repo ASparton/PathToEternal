@@ -4017,7 +4017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2933f76d9bb698243a333db47273d4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nextLevelSceneName: 
+  _nextLevelSceneName: Level2
 --- !u!114 &267925355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8076,7 +8076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103171939639073637, guid: c80fbf850ad97a34694544deb65b7fa2, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.48
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 9103171939639073637, guid: c80fbf850ad97a34694544deb65b7fa2, type: 3}
       propertyPath: m_LocalScale.z
@@ -10562,7 +10562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7962391335428833161, guid: fe0c38f5305f2e14ca7e033eed8192aa, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.65
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7962391335428833161, guid: fe0c38f5305f2e14ca7e033eed8192aa, type: 3}
       propertyPath: m_LocalScale.z
@@ -11626,6 +11626,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1932657407}
     m_Modifications:
+    - target: {fileID: 4709961027935792002, guid: 6f05844df8f4b174b95d01548e4860f6, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7fad6ac7a1da5f949a94b3bce53a8ffb, type: 2}
     - target: {fileID: 4922315940579644594, guid: 6f05844df8f4b174b95d01548e4860f6, type: 3}
       propertyPath: m_Name
       value: PressurePlate
@@ -19071,6 +19075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0a09ad5b0fb75f418906b3063e068d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _displayAnimationDuration: 0.3
 --- !u!4 &1380039234 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4197774592962519471, guid: c7c59dcd043594a4fb904a5d77965348, type: 3}
@@ -21903,7 +21908,7 @@ PrefabInstance:
       objectReference: {fileID: 1120133406}
     - target: {fileID: 7330932964501151739, guid: c86dfe7c671e0c64ead35cf0241d695e, type: 3}
       propertyPath: _actionAnimationDuration
-      value: 0.35
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c86dfe7c671e0c64ead35cf0241d695e, type: 3}

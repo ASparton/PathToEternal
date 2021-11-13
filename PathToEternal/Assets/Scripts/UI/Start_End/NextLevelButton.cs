@@ -9,5 +9,11 @@ public class NextLevelButton : MonoBehaviour
     /// <summary>
     /// Load the next level scene.
     /// </summary>
-    public void OnNextLevelButtonClick() => print("next level"); //=> SceneManager.LoadScene(_nextLevelSceneName);
+    public void OnNextLevelButtonClick()
+    {
+        if (_nextLevelSceneName != null)
+            SceneManager.LoadScene(_nextLevelSceneName);
+        else
+            print("No next level.");
+    }
 }

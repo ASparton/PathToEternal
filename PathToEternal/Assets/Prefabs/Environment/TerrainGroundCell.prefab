@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2466076029302178135}
   - component: {fileID: 4958996087774939633}
   m_Layer: 0
-  m_Name: TerrainCell
+  m_Name: TerrainGroundCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c3c5e4924a9d61499b6e63ba396eaae, type: 2}
+  - {fileID: 2100000, guid: fe9e8f2d0c4ca6f499c7e6adc1e41c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

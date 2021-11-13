@@ -5,11 +5,11 @@ public class DynamicActor : Actor
 {
     [Header("Animations")]
     [SerializeField][Tooltip("Seconds needed to rotate.")]
-    private float _rotationDuration = 1f;
+    protected float _rotationDuration = 1f;
     public float RotationDuration { get { return _rotationDuration; } }
 
     [SerializeField][Tooltip("Seconds needed to move from one cell to another.")]
-    private float _cellTransitionDuration = 2f;
+    protected float _cellTransitionDuration = 2f;
     public float CellTransitionDuration { get { return _cellTransitionDuration; } }
 
     [SerializeField][Tooltip("Animator of the dynamic actor -> Can be null.")]
@@ -25,7 +25,7 @@ public class DynamicActor : Actor
     /// </summary>
     /// <param name="direction">The direction of the movement.</param>
     /// <returns>True if the character is able to move, false if he can't.</returns>
-    public bool MoveToGridPosition(Direction direction)
+    protected bool MoveToGridPosition(Direction direction)
     {
         // Means that it is the same cell, so don't set a new position.
         if (inMovement)
@@ -57,10 +57,28 @@ public class DynamicActor : Actor
     }
 
     /// <summary>
+    /// Determine a direction depending on the given x and y axis value.
+    /// </summary>
+    /// <param name="x">The direction on the x axis (-1, 1 or 0).</param>
+    /// <param name="y">The direction on the y axis (-1, 1 or 0).</param>
+    /// <returns>The direction wanted</returns>
+    protected Direction GetDirection(int x, int y)
+    {
+        if (x == 1 && y == 0)
+            return Direction.EAST;
+        else if (x == -1 && y == 0)
+            return Direction.WEST;
+        else if (x == 0 && y == 1)
+            return Direction.NORTH;
+        else
+            return Direction.SOUTH;
+    }
+
+    /// <summary>
     /// Free the content of the actual cell and set the new cell of this dynamic character.
     /// </summary>
     /// <param name="newCell">The new cell to assign to the dynamic character.</param>
-    private void ChangeCell(Cell newCell)
+    protected virtual void ChangeCell(Cell newCell)
     {
         Cell previousCell = Cell;
         Cell = newCell;
@@ -72,7 +90,7 @@ public class DynamicActor : Actor
     /// </summary>
     /// <param name="destinationCell">The destination cell</param>
     /// <returns>Corountine</returns>
-    private IEnumerator MoveToCell(Cell destinationCell)
+    protected virtual IEnumerator MoveToCell(Cell destinationCell)
     {
         Vector3 finalDestination = new Vector3(GetXDestination(destinationCell), GetYDestination(destinationCell), destinationCell.transform.position.z);
         Vector3 startPosition = transform.position;
@@ -110,7 +128,7 @@ public class DynamicActor : Actor
     /// </summary>
     /// <param name="destinationCell">The cell to move to.</param>
     /// <returns>The position on the y axis on the next cell.</returns>
-    private float GetYDestination(Cell destinationCell)
+    protected float GetYDestination(Cell destinationCell)
     {
         float yDestination = destinationCell.transform.position.y;
         if (tag == "Crate")
@@ -128,7 +146,7 @@ public class DynamicActor : Actor
     /// </summary>
     /// <param name="destinationCell">The cell to move to.</param>
     /// <returns>The position on the x axis on the next cell.</returns>
-    private float GetXDestination(Cell destinationCell)
+    protected float GetXDestination(Cell destinationCell)
     {
         float xDestination = destinationCell.transform.position.x;
 
