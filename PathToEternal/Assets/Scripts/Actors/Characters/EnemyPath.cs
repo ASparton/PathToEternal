@@ -7,8 +7,6 @@ using UnityEngine;
 /// </summary>
 public class EnemyPath : DynamicActor
 {
-
-
     [Header("Enemy path")]
     [SerializeField][Tooltip("All the locations of the camera.")]
     private List<Cell> _pathList;
@@ -76,36 +74,12 @@ public class EnemyPath : DynamicActor
         // Do the attack animation if the player is on the next cell
         if (nextPlayerCell == _currentCell.Value && AnimationController != null)
         {
-            StartCoroutine(AttackMovement(_currentCell.Value));
-
             AnimationController.SetBool("isMoving", false);
-            AnimationController.SetBool("isAttacking", true);
-
-            EnemyPAttackedEvent?.Invoke(Cell);
+            StartCoroutine(AttackMovement(_currentCell.Value));
         }
         else // Move to the next position
             MoveToGridPosition(GetDirection(xDirection, yDirection));
     }
-
-    /// <summary>
-    /// Stop the attack animation and do the victory animation if the player has been attacked (means on the same cell).
-    /// </summary>
-    /// <param name="playerCell">The current cell of the player.</param>
-    private void OnPlayerFinishedMoving(Cell playerCell)
-    {
-        // Do the attack animation if the player is on the next cell
-        if (playerCell == _currentCell.Value && AnimationController != null)
-        {
-            AnimationController.SetBool("isAttacking", false);
-            AnimationController.SetBool("victory", true);
-            Invoke("StopVictory", 2.2f);
-        }
-    }
-
-    /// <summary>
-    /// Stop the victory animation.
-    /// </summary>
-    private void StopVictory() => AnimationController.SetBool("victory", false);
 
     /// <summary>
     /// Determine the next cell to go to (next or previous cell in the list).
@@ -179,26 +153,81 @@ public class EnemyPath : DynamicActor
             AnimationController.SetBool("isMoving", false);
     }
 
+    #region Attack animation management
+
+    /// <summary>
+    /// Stop the attack animation and do the victory animation if the player has been attacked (means on the same cell).
+    /// </summary>
+    /// <param name="playerCell">The current cell of the player.</param>
+    private void OnPlayerFinishedMoving(Cell playerCell)
+    {
+        // Do the attack animation if the player is on the next cell
+        if (playerCell == _currentCell.Value && AnimationController != null)
+        {
+            AnimationController.SetBool("isAttacking", true);
+            StartVictory();
+            EnemyPAttackedEvent?.Invoke(Cell);
+        }
+    }
+
+    /// <summary>
+    /// Start the victory animation.
+    /// </summary>
+    private void StartVictory()
+    {
+        AnimationController.SetBool("victory", true);
+        Invoke("StopVictory", 2.2f);
+    }
+
+    /// <summary>
+    /// Stop the victory animation.
+    /// </summary>
+    private void StopVictory()
+    {
+        AnimationController.SetBool("victory", false);
+        AnimationController.SetBool("isAttacking", false);
+    }
+
     /// <summary>
     /// Increase the forward position to half a cell.
     /// </summary>
     /// <returns>Coroutine</returns>
     private IEnumerator AttackMovement(Cell destinationCell)
     {
+        float finalDestinationX = transform.position.x;
+        float finalDestinationZ = transform.position.z;
+        if (destinationCell.GridPosition.x == Cell.GridPosition.x)
+        {
+            if (destinationCell.GridPosition.y > Cell.GridPosition.y)
+                finalDestinationZ += 0.5f;
+            else
+                finalDestinationZ -= 0.5f;
+
+        }
+        else if (destinationCell.GridPosition.y == Cell.GridPosition.y)
+        {
+            if (destinationCell.GridPosition.x > Cell.GridPosition.x)
+                finalDestinationX += 0.5f;
+            else
+                finalDestinationX -= 0.5f;
+        }
+
         Vector3 finalDestination = new Vector3(
-                                            GetXDestination(destinationCell) / 1.5f, 
-                                            GetYDestination(destinationCell) / 1.2f, 
-                                            destinationCell.transform.position.z);
+                                            finalDestinationX, 
+                                            transform.position.y,
+                                            finalDestinationZ);
         Vector3 startPosition = transform.position;
 
         float timeElapsed = 0f;
-        while (timeElapsed < 0.25f)
+        while (timeElapsed < _cellTransitionDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / 0.25f);
+            transform.position = Vector3.Lerp(startPosition, finalDestination, timeElapsed / _cellTransitionDuration);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
         transform.position = finalDestination;
     }
+
+    #endregion
 }

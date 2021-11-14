@@ -379,7 +379,6 @@ public class Player : DynamicActor
     {
         if (AnimationController != null)
         {
-            _rotationDuration = 0.5f;
             LookInDiretion(enemyCell.GridPosition.x - Cell.GridPosition.x, enemyCell.GridPosition.y - Cell.GridPosition.y);
 
             AnimationController.SetBool("die", true);
