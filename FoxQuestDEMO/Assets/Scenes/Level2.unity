@@ -12874,7 +12874,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 479766529}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
@@ -25706,13 +25706,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.3420201, y: 0, z: 0, w: 0.9396927}
-  m_LocalPosition: {x: 3.5, y: 4, z: -2}
+  m_LocalRotation: {x: 0.1150751, y: 0.8811196, z: -0.27781588, w: 0.36497167}
+  m_LocalPosition: {x: -2, y: 3, z: 10.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 479766530}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 40, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 35, y: 135, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25725,26 +25725,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62a24dc6b7326a444a22d6986282701a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locationList:
-  - {x: -2.5, y: 4, z: 1.5}
-  - {x: 6, y: 4, z: -1}
-  - {x: 3.5, y: 4, z: -2}
-  - {x: 9.5, y: 4, z: -0.5}
-  - {x: 9.5, y: 4, z: 9}
-  - {x: 8, y: 4, z: 7}
-  - {x: -1, y: 4, z: 15}
-  - {x: -3.5, y: 4, z: 10}
-  rotationList:
-  - {x: 0.31598538, y: 0.3596048, z: -0.13088542, w: 0.8681629}
-  - {x: 0.2961981, y: -0.46984634, z: 0.17101005, w: 0.8137977}
-  - {x: 0.3420201, y: 0, z: 0, w: 0.9396927}
-  - {x: 0.39044833, y: -0.34682897, z: 0.161729, w: 0.8373192}
-  - {x: 0.12708373, y: -0.86436117, z: 0.272532, w: 0.4030582}
-  - {x: -0.282571, y: 0.32619047, z: -0.10284744, w: -0.8962008}
-  - {x: 0.15035287, y: 0.8259432, z: -0.26041883, w: 0.47685844}
-  - {x: 0.17247772, y: 0.7812392, z: -0.24632372, w: 0.5470296}
-  orthographicList: 0000000000000000
-  transitionSpeed: 5
+  _locationList:
+  - {x: -2.5, y: 2.5, z: 1.5}
+  - {x: -0.5, y: 3, z: -1.5}
+  - {x: 4, y: 3, z: -2}
+  - {x: 9.5, y: 3.5, z: -0.5}
+  - {x: 10.5, y: 3.5, z: 8.5}
+  - {x: 8, y: 3, z: 14}
+  - {x: -1, y: 3, z: 10.25}
+  - {x: -2, y: 3, z: 10.5}
+  _rotationList:
+  - {x: 0.23911764, y: 0.36964384, z: -0.099045776, w: 0.8923991}
+  - {x: 0.23911764, y: 0.36964384, z: -0.099045776, w: 0.8923991}
+  - {x: 0.21561599, y: -0.08508985, z: 0.018863963, w: 0.9725809}
+  - {x: 0.27781588, y: -0.36497167, z: 0.1150751, w: 0.8811196}
+  - {x: -0.12940957, y: 0.83651626, z: -0.2241439, w: -0.48296297}
+  - {x: 0.12940954, y: -0.8365163, z: 0.22414392, w: 0.48296285}
+  - {x: 0.21828581, y: 0.51899153, z: -0.13906339, w: 0.81465364}
+  - {x: 0.1150751, y: 0.8811196, z: -0.27781588, w: 0.36497167}
+  _orthographicList: 0000000000000000
+  _transitionSpeed: 3
 --- !u!4 &964598517 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4197774592962519471, guid: c7c59dcd043594a4fb904a5d77965348, type: 3}
@@ -45092,7 +45092,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2933f76d9bb698243a333db47273d4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nextLevelSceneName: 
+  _nextLevelSceneName: Level3
 --- !u!114 &1682782610
 MonoBehaviour:
   m_ObjectHideFlags: 0

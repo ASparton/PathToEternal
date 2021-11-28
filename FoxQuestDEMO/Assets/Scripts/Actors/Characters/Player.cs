@@ -5,7 +5,7 @@ public class Player : DynamicActor
 {
     [Header("Animations")]
     [SerializeField][Tooltip("Duration of the spawn animation.")]
-    private float _spawnFallDuration = 5f;
+    private readonly float _spawnFallDuration = 5f;
 
     #region Delegates
 
@@ -54,9 +54,20 @@ public class Player : DynamicActor
     /// <param name="movementDirection">The direction to try to move to.</param>
     private void HandleMovement(Direction movementDirection)
     {
-        if (!MoveToGridPosition(movementDirection) && !inMovement && !isRotating)
-            StartCoroutine(PlayerCantMoveAnimation());
+        Cell nextCell = LevelGrid.Instance.GetCell(Cell.GridPosition, movementDirection);
+        if (nextCell.Enemy != null && nextCell.Enemy.PlayerGetNextCell() == Cell)
+        {
+            PlayerStartMovingEvent?.Invoke(Cell);
+            Invoke("NotifyEndMovement", _cellTransitionDuration);
+        }
+        else
+        {
+            if (!MoveToGridPosition(movementDirection) && !inMovement && !isRotating)
+                StartCoroutine(PlayerCantMoveAnimation());   
+        }
     }
+
+    private void NotifyEndMovement() => PlayerFinishedMovingEvent?.Invoke(Cell);
 
     /// <summary>
     /// Interpolate the position of the player to the given destination cell position.

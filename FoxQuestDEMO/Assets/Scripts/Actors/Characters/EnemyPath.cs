@@ -11,6 +11,10 @@ public class EnemyPath : DynamicActor
     [SerializeField][Tooltip("All the locations of the camera.")]
     private List<Cell> _pathList;
 
+    [SerializeField][Tooltip("True : when arrived at the end of the path, start again at the first element of the list.")]
+    private bool _loop = false;
+
+    private LinkedList<Cell> _path;
     private LinkedListNode<Cell> _currentCell;
     private bool _forward;
 
@@ -46,12 +50,12 @@ public class EnemyPath : DynamicActor
     private void Start()
     {
         // Initialisation of the path
-        LinkedList<Cell> path = new LinkedList<Cell>();
+        _path = new LinkedList<Cell>();
         foreach (Cell cell in _pathList)
-            path.AddLast(cell);
+            _path.AddLast(cell);
 
         // Initialisation of the first cell
-        _currentCell = path.First;
+        _currentCell = _path.First;
         Cell = _currentCell.Value;
         _forward = true;
     }
@@ -87,17 +91,51 @@ public class EnemyPath : DynamicActor
     /// <returns>The next cell to go to (next or previous cell in the list).</returns>
     private LinkedListNode<Cell> GetNextCell()
     {
-        if (_forward)
+        if (_loop)
         {
             if (_currentCell.Next == null)
-                _forward = false;
+                return _path.First;
+            return _currentCell.Next;
         }
         else
         {
-            if (_currentCell.Previous == null)
-                _forward = true;
+            if (_forward)
+            {
+                if (_currentCell.Next == null)
+                    _forward = false;
+            }
+            else
+            {
+                if (_currentCell.Previous == null)
+                    _forward = true;
+            }
+            return (_forward) ? _currentCell.Next : _currentCell.Previous;
         }
-        return (_forward) ? _currentCell.Next : _currentCell.Previous;
+    }
+
+    public Cell PlayerGetNextCell()
+    {
+        bool nextIsForward = _forward;
+        if (_loop)
+        {
+            if (_currentCell.Next == null)
+                return _path.First.Value;
+            return _currentCell.Next.Value;
+        }
+        else
+        {
+            if (_forward)
+            {
+                if (_currentCell.Next == null)
+                    nextIsForward = false;
+            }
+            else
+            {
+                if (_currentCell.Previous == null)
+                    nextIsForward = true;
+            }
+            return (nextIsForward) ? _currentCell.Next.Value : _currentCell.Previous.Value;
+        }
     }
 
     /// <summary>

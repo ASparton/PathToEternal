@@ -22,7 +22,7 @@ public class PathCamera : GenericCamera
     #endregion
 
     [SerializeField][Tooltip("The duration in second of the camera transitions.")]
-    private float _transitionSpeed = 1;
+    private float _transitionSpeed = 1f;
 
     private LinkedList<Vector3> _locations;
     private LinkedListNode<Vector3> _currentLocation;
@@ -61,7 +61,7 @@ public class PathCamera : GenericCamera
         _currentRotation = _rotations.First;
         _currentOrthographic = _orthographicPositions.First;
 
-        transform.position = _currentLocation.Value;
+        transform.localPosition = _currentLocation.Value;
         transform.rotation = _currentRotation.Value;
         Camera camera = (Camera)GetComponent("Camera");
         camera.orthographic = _currentOrthographic.Value;
